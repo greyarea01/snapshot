@@ -14,18 +14,13 @@ angular.module('snapshot-crates',[])
     .controller('CratesCtrl',['$scope','$http','$location',
     function($scope,$http,$location) {
 
-        $scope.crateModel={};
-        $scope.rodModel={};
-        $scope.murModel={};
-        $scope.modModel={};
-        $scope.chipModel={};
-        $scope.crateModel.child=$scope.rodModel;
-        $scope.rodModel.child=$scope.murModel;
-        $scope.murModel.child=$scope.modModel;
-        $scope.modModel.child=$scope.chipModel;
-        $scope.chipModel.child=null;
+        $scope.chipModel = configModel("chip");
+        $scope.modModel = configModel("mod",$scope.chipModel);
+        $scope.murModel = configModel("mur",$scope.modModel);
+        $scope.rodModel = configModel("rod",$scope.murModel);
+        $scope.crateModel = configModel("crate",$scope.rodModel);
 
-        $scope.iov='now'
+        $scope.iov='now';
 
         $scope.buildAPIURL =function(topModel,iov) {
             var url='api/crates/'+iov+'/';
@@ -80,70 +75,49 @@ angular.module('snapshot-crates',[])
                 $scope.crateModel.data=data;
                 $location.path=url;
             });
-
-        $scope.isShown=function(element,model) {
-            //console.log(element+' '+model.selected);
-            if(model.selected>=0) {
-                if( element===model.selected) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            return true;
-        };
-
+// click handlers - there are two - one for modules and one for everything else FIXME!
         $scope.modClick=function(box, index, module,moduleID,model){
-            console.log(index+' '+module+' '+moduleID)
+            console.log(index+' '+module+' '+moduleID);
+
             if(index==1 || index==2) {
-                if(model.selected===module) {
-                    if( model.urlelement===moduleID) {
-                       model.selected=-1;
-                        model.urlelement=-1;
-                        model.lastSelected.selected='';
-                        model.lastSelected=null;
+                var previousElement = model.lastSelected;
+                if(model.selectElement(box,module,moduleID)) {
+                    box.selected='bg-info';
+                    var apiurl=$scope.buildAPIURL($scope.crateModel,$scope.iov);
+                    var url=$scope.buildURL($scope.crateModel,$scope.iov);
+                    console.log(apiurl);
+                    console.log(url);
+                    $http.get(apiurl).success(function(data,status,headers,config) {
                         $scope.resetModel(model.child);
+                        console.log(JSON.stringify(data));
+                        model.child.data=data;
+                        $location.path=url;
+                    });
+
+                } else {
+                    if(previousElement) {
+                        previousElement.selected = '';
                         return;
                     }
                 }
-                if(model.lastSelected) {
-                    model.lastSelected.selected='';
-                }
 
-                model.selected=module;
-                model.urlelement=moduleID;
-                box.selected='bg-info'
-                model.lastSelected=box;
-                var apiurl=$scope.buildAPIURL($scope.crateModel,$scope.iov);
-                var url=$scope.buildURL($scope.crateModel,$scope.iov);
-                console.log(apiurl);
-                console.log(url);
-                $http.get(apiurl).success(function(data,status,headers,config) {
-                    $scope.resetModel(model.child);
-                    console.log(JSON.stringify(data));
-                    model.child.data=data;
-                    model.child.selected=-1;
-                    model.child.urlelement=-1;
-                    model.child.lastSelected=null;
-                    $location.path=url;
-                });
             }
-        }
+        };
 
         $scope.click=function(element,row,model) {
             if(model.child===null) {
                 console.log('No children. Just return');
                 return;
             }
-            if(model.selected===element) {
-                console.log('You clicked it again!');
-                model.selected=-1;
-                model.urlelement=-1;
-                model.lastSelected.selected='';
-                model.lastSelected=null;
-                $scope.resetModel(model.child);
-                return;
+
+            if( model.selectElement(row,element,element)) {
+                row.selected='bg-info';
+            } else {
+                row.selected='';
             }
+                return;
+
+
             if(model.lastSelected) {
                 model.lastSelected.selected='';
             }
@@ -164,7 +138,7 @@ angular.module('snapshot-crates',[])
                 $location.path=url;
             });
 
-        }
+        };
 
         $scope.resetModel = function(model) {
             if(model===null) {
@@ -175,5 +149,5 @@ angular.module('snapshot-crates',[])
             model.urlelement=-1;
             model.lastSelected=null;
             $scope.resetModel(model.child);
-        }
+        };
     }]);

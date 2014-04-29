@@ -2965,7 +2965,7 @@ function Browser(window, document, $log, $sniffer) {
    */
   self.notifyWhenNoOutstandingRequests = function(callback) {
     // force browser to execute all pollFns - this is needed so that cookies and other pollers fire
-    // at some deterministic time in respect to the test runner's actions. Leaving things up to the
+    // at some deterministic time in respect to the snapshot-test runner's actions. Leaving things up to the
     // regular poller would result in flaky tests.
     forEach(pollFns, function(pollFn){ pollFn(); });
 
@@ -3211,7 +3211,7 @@ function Browser(window, document, $log, $sniffer) {
    * @description
    * Executes a fn asynchroniously via `setTimeout(fn, delay)`.
    *
-   * Unlike when calling `setTimeout` directly, in test this function is mocked and instead of using
+   * Unlike when calling `setTimeout` directly, in snapshot-test this function is mocked and instead of using
    * `setTimeout` in tests, the fns are queued in an array, which can be programmatically flushed
    * via `$browser.defer.flush()`.
    *
@@ -3925,7 +3925,7 @@ function $CompileProvider($provide) {
             }
           } catch (e) {
             // turns out that under some circumstances IE9 throws errors when one attempts to read comment's node value.
-            // Just ignore it and continue. (Can't seem to reproduce in test case.)
+            // Just ignore it and continue. (Can't seem to reproduce in snapshot-test case.)
           }
           break;
       }
