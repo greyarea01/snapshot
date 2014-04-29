@@ -59,6 +59,22 @@ configModel = function (label,mychild) {
                 this.lastSelected = obj;
                 return true;
             }
+        },
+
+        clone: function() {
+            if( this.processed) {
+                return null;
+            }
+            var myclone = Object.create(this.prototype);
+            myclone.selectedElement = this.selectedElement;
+            myclone.selectedURLElement = this.selectedURLElement;
+            myclone.data = JSON.parse(JSON.stringify(this.data));
+            myclone.lastSelected=this.lastSelected;
+            myclone.folders = JSON.parse(JSON.stringify(this.folders));
+            myclone.processed=true;
+            myclone.child = this.child.clone();
+            myclone.processed=false;
+            return myclone;
         }
 
 

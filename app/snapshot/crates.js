@@ -14,6 +14,8 @@ angular.module('snapshot-crates', [])
     .controller('CratesCtrl', ['$scope', '$http', '$location',
         function ($scope, $http, $location) {
 
+            $scope.dataStore1 = null;
+
             $scope.chipModel = configModel("chip");
             $scope.modModel = configModel("mod", $scope.chipModel);
             $scope.murModel = configModel("mur", $scope.modModel);
