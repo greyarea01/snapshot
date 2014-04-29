@@ -13,7 +13,7 @@
                 </tr>
              </thead>
             <tbody>
-                <tr ng-repeat="row in crateModel.data.rows" ng-click="click(row.values[0],this,crateModel)" ng-show="isShown(row.values[0],crateModel)" class="{{selected}}">
+                <tr ng-repeat="row in crateModel.data.rows" ng-click="click(row.values[0],this,crateModel)" ng-show="crateModel.isShown(row.values[0])" class="{{selected}}">
                     <td ng-repeat="value in row.values">{{value}}</td>
                 </tr>
             </tbody>
@@ -29,7 +29,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in rodModel.data.rows" ng-click="click(row.values[1],this,rodModel)" ng-show="isShown(row.values[1],rodModel)" class="{{selected}}">
+            <tr ng-repeat="row in rodModel.data.rows" ng-click="click(row.values[1],this,rodModel)" ng-show="rodModel.isShown(row.values[1])" class="{{selected}}">
                 <td ng-repeat="value in row.values">{{value}}</td>
             </tr>
             </tbody>
@@ -47,7 +47,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in murModel.data.rows" ng-click="click(row.values[2],this,murModel)" ng-show="isShown(row.values[2],murModel)" class="{{selected}}">
+            <tr ng-repeat="row in murModel.data.rows" ng-click="click(row.values[2],this,murModel)" ng-show="murModel.isShown(row.values[2])" class="{{selected}}">
                 <td ng-repeat="value in row.values">{{value}}</td>
             </tr>
             </tbody>
@@ -66,7 +66,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in modModel.data.rows" ng-show="isShown(row.values[0],modModel)">
+            <tr ng-repeat="row in modModel.data.rows" ng-show="modModel.isShown(row.values[0])">
                 <td ng-repeat="value in row.values" ng-click="modClick(this, $index,row.values[0],value,modModel)" class="{{selected}}"> {{value}} </td>
             </tr>
             </tbody>

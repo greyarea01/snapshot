@@ -21,42 +21,42 @@ configModel = function (label,mychild) {
         folders: [], // list of folders and IOV information
 
         isShown: function (element) {
-            if (selectedElement >= 0) {
-                return (element===selectedElement);
+            if (this.selectedElement >= 0) {
+                return (element===this.selectedElement);
             }
             return true;
         },
 
         resetModel: function (recurse) {
-            data = null;
-            selectedElement = -1;
-            selectedURLElement = -1;
-            lastSelected = null;
-            processed = true; // protection against infinite recursion
-            if (recurse && child != null && !child.processed) {
-                child.resetModel(true);
+            this.data = null;
+            this.selectedElement = -1;
+            this.selectedURLElement = -1;
+            this.lastSelected = null;
+            this.processed = true; // protection against infinite recursion
+            if (recurse && this.child != null && !this.child.processed) {
+                this.child.resetModel(true);
             }
-            processed = false;
+            this.processed = false;
 
         },
 
         setChild: function (obj) {
-            child = obj;
+            this.child = obj;
         },
 
         selectElement: function(obj,element,urlElement) {
-            if( element === selectedElement) { // unselect
-                selectedElement = -1;
-                urlElement = -1;
-                lastSelected=null;
-                if( child != null ) {
-                    child.resetModel(true);
+            if( urlElement === this.selectedURLElement) { // unselect
+                this.selectedElement = -1;
+                this.selectedURLElement = -1;
+                this.lastSelected=null;
+                if( this.child != null ) {
+                    this.child.resetModel(true);
                 }
                 return false;
             } else {
-                selectedElement = element;
-                selectedURLElement = urlElement;
-                lastSelected = obj;
+                this.selectedElement = element;
+                this.selectedURLElement = urlElement;
+                this.lastSelected = obj;
                 return true;
             }
         }
