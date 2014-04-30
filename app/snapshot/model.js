@@ -61,26 +61,34 @@ configModel = function (label,mychild) {
             }
         },
 
-        clone: function() {
+        copy: function() {
+
             if( this.processed) {
                 return null;
             }
-            var myclone = Object.create(this.prototype);
-            myclone.selectedElement = this.selectedElement;
-            myclone.selectedURLElement = this.selectedURLElement;
-            myclone.data = JSON.parse(JSON.stringify(this.data));
-            myclone.lastSelected=this.lastSelected;
-            myclone.folders = JSON.parse(JSON.stringify(this.folders));
-            myclone.isShown = this.isShown;
-            myclone.clone = this.clone;
-            myclone.resetModel = this.resetModel;
-            myclone.setChild = this.setChild;
-            myclone.selectElement = this.selectElement;
+            var mycopy = {};
+            mycopy.selectedElement = this.selectedElement;
+            mycopy.selectedURLElement = this.selectedURLElement;
+            mycopy.data = angular.copy(this.data);
+//            mycopy.lastSelected=this.lastSelected;
+            mycopy.lastSelected=null;
+            mycopy.folders = null;
+            // copy over functions
+            mycopy.isShown = this.isShown;
+            mycopy.copy = this.copy;
+            mycopy.resetModel = this.resetModel;
+            mycopy.setChild = this.setChild;
+            mycopy.selectElement = this.selectElement;
 
-            myclone.processed=true;
-            myclone.child = this.child.clone();
-            myclone.processed=false;
-            return myclone;
+            mycopy.processed=false;
+            this.processed = true;
+            if( this.child) {
+                mycopy.child = this.child.copy();
+            } else {
+                mycopy.child = null;
+            }
+            this.processed=false;
+            return mycopy;
         }
 
 
