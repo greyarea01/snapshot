@@ -71,6 +71,12 @@ configModel = function (label,mychild) {
             myclone.data = JSON.parse(JSON.stringify(this.data));
             myclone.lastSelected=this.lastSelected;
             myclone.folders = JSON.parse(JSON.stringify(this.folders));
+            myclone.isShown = this.isShown;
+            myclone.clone = this.clone;
+            myclone.resetModel = this.resetModel;
+            myclone.setChild = this.setChild;
+            myclone.selectElement = this.selectElement;
+
             myclone.processed=true;
             myclone.child = this.child.clone();
             myclone.processed=false;
