@@ -3,7 +3,9 @@
     {{crateModel.iov}}
         <div class="container">
             <button type="button" class="btn btn-default" ng-click="storeSnapshot(0)"> Store current snapshot {{dataStores.length}}</button>
-            <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
+
+                 <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
+
             <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1">Compare</button>
         </div>
         <div class="container">
