@@ -14,15 +14,26 @@ angular.module('snapshot-crates', [])
     .controller('CratesCtrl', ['$scope', '$http', '$location',
         function ($scope, $http, $location) {
 
-            $scope.dataStore1 = null;
+            $scope.dataStores=[];
+
 
             $scope.chipModel = configModel("chip");
             $scope.modModel = configModel("mod", $scope.chipModel);
             $scope.murModel = configModel("mur", $scope.modModel);
             $scope.rodModel = configModel("rod", $scope.murModel);
             $scope.crateModel = configModel("crate", $scope.rodModel);
-            console.log(JSON.stringify($scope.crateModel));
+            console.log('Testing testing 1 2 3 : '+JSON.stringify($scope.crateModel));
+
             $scope.iov = 'now';
+
+            $scope.storeSnapshot = function() {
+                // append current data store plus a label to dataStores array
+                var obj = {
+                    label: "hello",
+                    model: $scope.crateModel.copy()
+                };
+                $scope.dataStores.push(obj);
+            };
 
             $scope.buildAPIURL = function (topModel, iov) {
                 var url = 'api/crates/' + iov + '/';
