@@ -2,21 +2,10 @@
     <div ng-controller="CratesCtrl">
     {{crateModel.iov}}
         <div class="container">
-            <table class="table table-hover table-condensed">
-                <thead>
-                <tr>
-                    <th ng-repeat="header in crateModel.data.headers">{{header}}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="row in dataStore1.data.rows" ng-click="click(row.values[0],this,dataStore1)" ng-show="dataStore1.isShown(row.values[0])" class="{{selected}}">
-                    <td ng-repeat="value in row.values">{{value}}</td>
-                </tr>
-                </tbody>
-            </table>
-
+            <button type="button" class="btn btn-default" ng-click="storeSnapshot(0)"> Store current snapshot {{dataStores.length}}</button>
+            <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
+            <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1">Compare</button>
         </div>
-
         <div class="container">
             <div class="container text-primary" ng-show="crateModel.data">
                 /SCT/DAQ/Configuration/TIM<br/>
