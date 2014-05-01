@@ -6,7 +6,7 @@
 
                  <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
 
-            <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1">Compare</button>
+            <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
         </div>
         <div class="container">
             <div class="container text-primary" ng-show="crateModel.data">

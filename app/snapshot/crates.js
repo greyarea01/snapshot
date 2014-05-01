@@ -11,10 +11,10 @@ angular.module('snapshot-crates', [])
                     controller: 'CratesCtrl'
                 });
         }])
-    .controller('CratesCtrl', ['$scope', '$http', '$location',
-        function ($scope, $http, $location) {
+    .controller('CratesCtrl', ['$scope', '$http', '$location','CratesDataStore',
+        function ($scope, $http, $location, CratesDataStore) {
 
-            $scope.dataStores=[];
+            $scope.dataStores=CratesDataStore;
 
 
             $scope.chipModel = configModel("chip");
@@ -25,7 +25,10 @@ angular.module('snapshot-crates', [])
             console.log('Testing testing 1 2 3 : '+JSON.stringify($scope.crateModel));
 
             $scope.iov = 'now';
-
+            $scope.diff = function() {
+                console.log('compare clicked');
+                $location.path('/diff');
+            }
             $scope.storeSnapshot = function() {
                 // append current data store plus a label to dataStores array
                 var obj = {
@@ -86,7 +89,7 @@ angular.module('snapshot-crates', [])
                     console.log('CratesCtrl:' + JSON.stringify(data));
                     $scope.crateModel.resetModel(true);
                     $scope.crateModel.data = data;
-                    $location.path = url;
+                    //$location.path = url;
                     console.log(JSON.stringify($scope.crateModel));
 
                 });
@@ -106,7 +109,7 @@ angular.module('snapshot-crates', [])
                             model.child.resetModel(true);
                             console.log(JSON.stringify(data));
                             model.child.data = data;
-                            $location.path = url;
+                            //$location.path = url;
                         });
 
                     } else {
@@ -145,7 +148,7 @@ angular.module('snapshot-crates', [])
                         model.child.selected = -1;
                         model.child.urlelement = -1;
                         model.child.lastSelected = null;
-                        $location.path = url;
+                        //$location.path = url;
                     });
 
                 } else {
