@@ -22,13 +22,39 @@ angular.module('snapshot-crates', [])
             $scope.murModel = configModel("mur", $scope.modModel);
             $scope.rodModel = configModel("rod", $scope.murModel);
             $scope.crateModel = configModel("crate", $scope.rodModel);
-            console.log('Testing testing 1 2 3 : '+JSON.stringify($scope.crateModel));
+
+            $scope.crateModel.rowIndex = 0;
+            $scope.rodModel.rowIndex=1;
+            $scope.murModel.rowIndex=2;
+            $scope.modModel.rowIndex=0;
+            $scope.modModel.elementIndices = [1,2];
+            $scope.chipModel.rowIndex=0;
+
+            $scope.modelList = [
+                $scope.crateModel,
+                $scope.rodModel,
+                $scope.murModel,
+                $scope.modModel,
+                $scope.chipModel
+            ];
+
+            var size = $scope.modelList.length;
+            for( var i = 0;i<size;++i) {
+                console.log($scope.modelList[i].name);
+            }
+//            console.log('Testing testing 1 2 3 : '+JSON.stringify($scope.modelList));
 
             $scope.iov = 'now';
             $scope.diff = function() {
                 console.log('compare clicked');
                 $location.path('/diff');
-            }
+            };
+    // needed for nested ng-repeats to pass the current model down to the nested bits
+            $scope.thisModel = null;
+            $scope.setThisModel = function(model) {
+                console.log('setthisModel :'+model.name);
+                $scope.thisModel = model;
+            };
             $scope.storeSnapshot = function() {
                 // append current data store plus a label to dataStores array
     // FIXME - move this over to dataStore and give it an "add" method
@@ -46,7 +72,7 @@ angular.module('snapshot-crates', [])
                 var model = topModel;
                 var finished = false;
                 while (!finished) {
-                    if (model.selectedElement >= 0) {
+                    if (model.selectedRow >= 0) {
                         url += model.selectedURLElement + '/';
                         model = model.child;
                         if (model === null) {
@@ -68,7 +94,7 @@ angular.module('snapshot-crates', [])
                 var finished = false;
                 while (!finished) {
                     if (model.selected >= 0) {
-                        url += model.urlelement + '/';
+                        url += model.selectedURLElement + '/';
                         model = model.child;
                         if (model === null) {
                             finished = true;
@@ -85,7 +111,7 @@ angular.module('snapshot-crates', [])
 
 
             var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
-            var url = $scope.buildURL($scope.crateModel, $scope.iov);
+            //var url = $scope.buildURL($scope.crateModel, $scope.iov);
 
             $http.get(apiurl)
                 .success(function (data, status, headers, config) {
@@ -96,68 +122,31 @@ angular.module('snapshot-crates', [])
                     console.log(JSON.stringify($scope.crateModel));
 
                 });
-// click handlers - there are two - one for modules and one for everything else FIXME!
-            $scope.modClick = function (box, index, module, moduleID, model) {
-                console.log(index + ' ' + module + ' ' + moduleID);
 
-                if (index == 1 || index == 2) {
-                    var previousElement = model.lastSelected;
-                    if (model.selectElement(box, module, moduleID,0)) { // selectedElementIndex is 0 for modules
-                        box.selected = 'bg-info';
+            $scope.click = function(index, values, model) {
+                console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
+
+                // was it a select or a deselect
+                if(model.selectElement(index,values)) {
+                    console.log('Select operation');
+                    // a select operation - lets grab some new data
+                    // if there is a child to give the data to...
+                    if( model.child) {
                         var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
-                        var url = $scope.buildURL($scope.crateModel, $scope.iov);
+                        // this will eventually be used with $location
+                        //var url = $scope.buildURL($scope.crateModel, $scope.iov);
                         console.log(apiurl);
-                        console.log(url);
+                        //console.log(url);
                         $http.get(apiurl).success(function (data, status, headers, config) {
                             model.child.resetModel(true);
                             console.log(JSON.stringify(data));
                             model.child.data = data;
                             //$location.path = url;
                         });
-
-                    } else {
-                        if (previousElement) {
-                            previousElement.selected = '';
-                            return;
-                        }
                     }
-
-                }
-            };
-
-            $scope.click = function (element, row, model,index) {
-                if (model.child === null) {
-                    console.log('No children. Just return');
-                    return;
-                }
-                var previousSelection = model.lastSelected;
-                console.log('click: ' + model.name);
-                if (model.selectElement(row, element, element, index)) {
-                    // only one row can be selected
-                    // so if there was a previous row selected
-                    // set its "selected" field to ''
-                    // then it won't be highlighted anymore
-                    if (previousSelection) {
-                        previousSelection.selected = '';
-                    }
-                    row.selected = 'bg-info';
-                    var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
-                    var url = $scope.buildURL($scope.crateModel, $scope.iov);
-                    console.log(url);
-                    console.log(apiurl);
-                    $http.get(apiurl).success(function (data, status, headers, config) {
-                        model.child.resetModel(true);
-                        model.child.data = data;
-                        model.child.selected = -1;
-                        model.child.urlelement = -1;
-                        model.child.lastSelected = null;
-                        //$location.path = url;
-                    });
-
                 } else {
-                    row.selected = '';
+                    console.log('Deselect operation');
+                  // was a deselect - nothing to do at the moment
                 }
-                return;
-            };
-
+            }
         }]);

@@ -53,6 +53,7 @@ angular.module('snapshot-diff', [])
                     this.headers=headers;
                     this.rows=rows;
                     console.log('Found '+rows.length+' rows');
+                    console.log('found '+headers.length+' headers');
                 }
             };
 
@@ -71,13 +72,13 @@ angular.module('snapshot-diff', [])
                 var nstores = dataStore.length;
                 for(var i = 0;i<nstores;++i) {
                     store = dataStore[i];
-                    console.log('Processing '+store.label+' '+store.model.selectedElement+' '+(i+1)+'/'+nstores);
+                    console.log('Processing '+store.label+' '+store.model.selectedRow+' '+(i+1)+'/'+nstores);
                     headers = [];
                     model = store.model;
-                    while (model && model.selectedElement>=0) {
+                    while (model && model.selectedRow>=0) {
                         nMatched = 0;
-                        index = model.selectedElementIndex;
-                        element = model.selectedElement;
+                        index = model.rowIndex;
+                        element = model.selectedRow;
                         data = model.data;
                         var nheaders = data.headers.length;
                         for(var j = 0;j<nheaders;++j) {
@@ -85,7 +86,7 @@ angular.module('snapshot-diff', [])
                         }
                         model = model.child;
                         if (model) {
-                            if (model.selectedElement < 0) {
+                            if (model.selectedRow < 0) {
                                 model = null; // stop if there is a model but no element was selected
                             }
                         }
@@ -118,10 +119,10 @@ angular.module('snapshot-diff', [])
                     values = [];
                     counter =0;
                     model = store.model;
-                    console.log('Processing '+store.label+' '+store.model.selectedElement+' '+(i+1)+'/'+nstores);
-                    while(model && model.selectedElement>=0) {
-                        index = model.selectedElementIndex;
-                        element = model.selectedElement;
+                    console.log('Processing '+store.label+' '+store.model.selectedRow+' '+(i+1)+'/'+nstores);
+                    while(model && model.selectedRow>=0) {
+                        index = model.rowIndex;
+                        element = model.selectedRow;
                         data = model.data;
                         var nrows = data.rows.length;
                         for(var j =0;j<nrows;++j) {
@@ -137,7 +138,7 @@ angular.module('snapshot-diff', [])
                         }
                         model = model.child;
                         if (model) {
-                            if (model.selectedElement < 0) {
+                            if (model.selectedRow < 0) {
                                 model = null; // stop if there is a model but no element was selected
                             }
                         }

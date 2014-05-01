@@ -8,94 +8,22 @@
 
             <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
         </div>
+
         <div class="container">
-            <div class="container text-primary" ng-show="crateModel.data">
-                /SCT/DAQ/Configuration/TIM<br/>
-            </div>
-        <table class="table table-hover table-condensed">
-            <thead>
+            <table class="table table-hover table-condensed" ng-repeat="md in modelList">
+                <thead>
                 <tr>
-                    <th ng-repeat="header in crateModel.data.headers">{{header}}</th>
+                    <th ng-repeat="header in md.data.headers">{{header}}</th>
                 </tr>
-             </thead>
-            <tbody>
-                <tr ng-repeat="row in crateModel.data.rows" ng-click="click(row.values[0],this,crateModel,0)" ng-show="crateModel.isShown(row.values[0])" class="{{selected}}">
-                    <td ng-repeat="value in row.values">{{value}}</td>
+                </thead>
+                <tr ng-repeat="row in md.data.rows" ng-show="md.showRow(row.values)">
+                    <td ng-repeat="value in row.values" ng-click="click($index,row.values,md)">{{value}}</td>
                 </tr>
-            </tbody>
-        </table>
-            <div class="container text-primary" ng-show="rodModel.data">
-                /SCT/DAQ/Configuration/ROD<br/>
-                /SCT/DAQ/Configuration/Slave<br/>
-            </div>
-        <table class="table table-hover table-condensed">
-            <thead>
-            <tr>
-                <th ng-repeat="header in rodModel.data.headers">{{header}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="row in rodModel.data.rows" ng-click="click(row.values[1],this,rodModel,1)" ng-show="rodModel.isShown(row.values[1])" class="{{selected}}">
-                <td ng-repeat="value in row.values">{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
 
-        <br/>
-            <div class="container text-primary" ng-show="murModel.data">
-                /SCT/DAQ/Configuration/RODMUR<br/>
-                /SCT/DAQ/Configuration/MUR<br/>
-            </div>
-        <table class="table table-hover table-condensed">
-            <thead>
-            <tr>
-                <th ng-repeat="header in murModel.data.headers">{{header}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="row in murModel.data.rows" ng-click="click(row.values[2],this,murModel,2)" ng-show="murModel.isShown(row.values[2])" class="{{selected}}">
-                <td ng-repeat="value in row.values">{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
-        <br/>
-            <div class="container text-primary" ng-show="modModel.data">
-                /SCT/DAQ/Configuration/RODMUR<br/>
-                /SCT/DAQ/Configuration/MUR<br/>
-                /SCT/DAQ/Configuration/Module<br/>
-            </div>
-        <table class="table table-hover table-condensed">
-            <thead>
-            <tr>
-                <th ng-repeat="header in modModel.data.headers">{{header}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="row in modModel.data.rows" ng-show="modModel.isShown(row.values[0])">
-                <td ng-repeat="value in row.values" ng-click="modClick(this, $index,row.values[0],value,modModel)" class="{{selected}}"> {{value}} </td>
-            </tr>
-            </tbody>
-        </table>
+        </div>
 
-        <br/>
-            <div class="container text-primary" ng-show="chipModel.data">
-                /SCT/DAQ/Configuration/Module<br/>
-                /SCT/DAQ/Configuration/Chip<br/>
-            </div>
-
-            <table class="table table-hover table-condensed">
-            <thead>
-            <tr>
-                <th ng-repeat="header in chipModel.data.headers">{{header}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="row in chipModel.data.rows">
-                <td ng-repeat="value in row.values">{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
     </div>
 </div>
