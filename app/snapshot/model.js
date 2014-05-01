@@ -15,6 +15,7 @@ configModel = function (label,mychild) {
         child: null, // child object
         selectedElement: -1, // index of selected element
         selectedURLElement: -1, // index of selected element as it appears in the URL
+        selectedElementIndex: -1,
         lastSelected: null, // object that was selected
         data: null, // data
         processed: false, // flag used to avoid recursion in reset method
@@ -31,6 +32,7 @@ configModel = function (label,mychild) {
             this.data = null;
             this.selectedElement = -1;
             this.selectedURLElement = -1;
+            this.selectedElementIndex = -1;
             this.lastSelected = null;
             this.processed = true; // protection against infinite recursion
             if (recurse && this.child != null && !this.child.processed) {
@@ -44,10 +46,11 @@ configModel = function (label,mychild) {
             this.child = obj;
         },
 
-        selectElement: function(obj,element,urlElement) {
+        selectElement: function(obj,element,urlElement, index) {
             if( urlElement === this.selectedURLElement) { // unselect
                 this.selectedElement = -1;
                 this.selectedURLElement = -1;
+                this.selectedElementIndex = -1;
                 this.lastSelected=null;
                 if( this.child != null ) {
                     this.child.resetModel(true);
@@ -57,6 +60,7 @@ configModel = function (label,mychild) {
                 this.selectedElement = element;
                 this.selectedURLElement = urlElement;
                 this.lastSelected = obj;
+                this.selectedElementIndex = index;
                 return true;
             }
         },
@@ -69,6 +73,7 @@ configModel = function (label,mychild) {
             var mycopy = {};
             mycopy.selectedElement = this.selectedElement;
             mycopy.selectedURLElement = this.selectedURLElement;
+            mycopy.selectedElementIndex = this.selectedElementIndex;
             mycopy.data = angular.copy(this.data);
 //            mycopy.lastSelected=this.lastSelected;
             mycopy.lastSelected=null;

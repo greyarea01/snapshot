@@ -4,7 +4,8 @@
 
 angular.module('snapshot', [
     'ui.bootstrap',
-    'snapshot-crates']).
+    'snapshot-crates',
+    'snapshot-diff']).
     config(['$routeProvider', '$locationProvider',
         function($routeProvider,$locationProvider) {
             $routeProvider.

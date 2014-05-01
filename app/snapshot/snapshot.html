@@ -3,10 +3,10 @@
     {{crateModel.iov}}
         <div class="container">
             <button type="button" class="btn btn-default" ng-click="storeSnapshot(0)"> Store current snapshot {{dataStores.length}}</button>
-<div class="btn-group">
+
                  <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
-</div>
-            <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1">Compare</button>
+
+            <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
         </div>
         <div class="container">
             <div class="container text-primary" ng-show="crateModel.data">
@@ -19,7 +19,7 @@
                 </tr>
              </thead>
             <tbody>
-                <tr ng-repeat="row in crateModel.data.rows" ng-click="click(row.values[0],this,crateModel)" ng-show="crateModel.isShown(row.values[0])" class="{{selected}}">
+                <tr ng-repeat="row in crateModel.data.rows" ng-click="click(row.values[0],this,crateModel,0)" ng-show="crateModel.isShown(row.values[0])" class="{{selected}}">
                     <td ng-repeat="value in row.values">{{value}}</td>
                 </tr>
             </tbody>
@@ -35,7 +35,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in rodModel.data.rows" ng-click="click(row.values[1],this,rodModel)" ng-show="rodModel.isShown(row.values[1])" class="{{selected}}">
+            <tr ng-repeat="row in rodModel.data.rows" ng-click="click(row.values[1],this,rodModel,1)" ng-show="rodModel.isShown(row.values[1])" class="{{selected}}">
                 <td ng-repeat="value in row.values">{{value}}</td>
             </tr>
             </tbody>
@@ -53,7 +53,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in murModel.data.rows" ng-click="click(row.values[2],this,murModel)" ng-show="murModel.isShown(row.values[2])" class="{{selected}}">
+            <tr ng-repeat="row in murModel.data.rows" ng-click="click(row.values[2],this,murModel,2)" ng-show="murModel.isShown(row.values[2])" class="{{selected}}">
                 <td ng-repeat="value in row.values">{{value}}</td>
             </tr>
             </tbody>
