@@ -86,27 +86,22 @@ angular.module('snapshot-crates', [])
                     console.log('CratesCtrl:' + JSON.stringify(data));
                     $scope.crateModel.resetModel(true);
                     $scope.crateModel.data = data;
-                    $location.path = url;
+                    //$location.path(url);
                     console.log(JSON.stringify($scope.crateModel));
 
                 });
 // click handlers - there are two - one for modules and one for everything else FIXME!
             $scope.modClick = function (box, index, module, moduleID, model) {
-                console.log(index + ' ' + module + ' ' + moduleID);
-
                 if (index == 1 || index == 2) {
                     var previousElement = model.lastSelected;
                     if (model.selectElement(box, module, moduleID)) {
                         box.selected = 'bg-info';
                         var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
                         var url = $scope.buildURL($scope.crateModel, $scope.iov);
-                        console.log(apiurl);
-                        console.log(url);
                         $http.get(apiurl).success(function (data, status, headers, config) {
                             model.child.resetModel(true);
-                            console.log(JSON.stringify(data));
                             model.child.data = data;
-                            $location.path = url;
+                           // $location.path(url);
                         });
 
                     } else {
@@ -121,7 +116,6 @@ angular.module('snapshot-crates', [])
 
             $scope.click = function (element, row, model) {
                 if (model.child === null) {
-                    console.log('No children. Just return');
                     return;
                 }
                 var previousSelection = model.lastSelected;
@@ -137,15 +131,13 @@ angular.module('snapshot-crates', [])
                     row.selected = 'bg-info';
                     var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
                     var url = $scope.buildURL($scope.crateModel, $scope.iov);
-                    console.log(url);
-                    console.log(apiurl);
                     $http.get(apiurl).success(function (data, status, headers, config) {
                         model.child.resetModel(true);
                         model.child.data = data;
                         model.child.selected = -1;
                         model.child.urlelement = -1;
                         model.child.lastSelected = null;
-                        $location.path = url;
+                      //  $location.path(url);
                     });
 
                 } else {
