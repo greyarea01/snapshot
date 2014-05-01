@@ -11,7 +11,9 @@
             </tr>
             </thead>
             <tbody>
+
             <tr ng-repeat="row in diffModel.rows">
+                <th>{{row.name}}</th>
                 <td ng-repeat="value in row.values">{{value}}</td>
             </tr>
             </tbody>
