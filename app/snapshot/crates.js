@@ -31,10 +31,13 @@ angular.module('snapshot-crates', [])
             }
             $scope.storeSnapshot = function() {
                 // append current data store plus a label to dataStores array
+    // FIXME - move this over to dataStore and give it an "add" method
                 var obj = {
                     label: "hello",
+                    iov: $scope.iov,
                     model: $scope.crateModel.copy()
                 };
+                console.log('Snapshot stored:' + JSON.stringify(obj));
                 $scope.dataStores.push(obj);
             };
 
@@ -99,7 +102,7 @@ angular.module('snapshot-crates', [])
 
                 if (index == 1 || index == 2) {
                     var previousElement = model.lastSelected;
-                    if (model.selectElement(box, module, moduleID)) {
+                    if (model.selectElement(box, module, moduleID,0)) { // selectedElementIndex is 0 for modules
                         box.selected = 'bg-info';
                         var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
                         var url = $scope.buildURL($scope.crateModel, $scope.iov);
@@ -122,14 +125,14 @@ angular.module('snapshot-crates', [])
                 }
             };
 
-            $scope.click = function (element, row, model) {
+            $scope.click = function (element, row, model,index) {
                 if (model.child === null) {
                     console.log('No children. Just return');
                     return;
                 }
                 var previousSelection = model.lastSelected;
                 console.log('click: ' + model.name);
-                if (model.selectElement(row, element, element)) {
+                if (model.selectElement(row, element, element, index)) {
                     // only one row can be selected
                     // so if there was a previous row selected
                     // set its "selected" field to ''
