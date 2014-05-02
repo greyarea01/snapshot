@@ -4,15 +4,15 @@
 
 var module = angular.module('snapshot');
 
-module.factory('CratesAPI', ['$http', function() {
-    var api;
-    api = {
-        getByURL: function (url) {
-            return $http.get(url).success(function (data, status, headers, config) {
+module.factory('CratesAPI', ['$http', function($http) {
+    var api = {
+        getByURL: function(url) {
+            return $http.get(url).then(function (data, status, headers, config) {
                 return data;
-            });
+            }); // returns a promise
         }
     };
+    return api;
 }]);
 
 

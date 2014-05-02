@@ -11,8 +11,8 @@ angular.module('snapshot-crates', [])
                     controller: 'CratesCtrl'
                 });
         }])
-    .controller('CratesCtrl', ['$scope', '$http', '$location','CratesAPI','CratesDataStore',
-        function ($scope, $http, $location, CratesAPI, CratesDataStore) {
+    .controller('CratesCtrl', ['$scope', '$location','CratesAPI','CratesDataStore',
+        function ($scope, $location, CratesAPI, CratesDataStore) {
 
             $scope.dataStores=CratesDataStore;
 
@@ -42,7 +42,6 @@ angular.module('snapshot-crates', [])
             for( var i = 0;i<size;++i) {
                 console.log($scope.modelList[i].name);
             }
-//            console.log('Testing testing 1 2 3 : '+JSON.stringify($scope.modelList));
 
             $scope.iov = 'now';
             $scope.diff = function() {
@@ -112,9 +111,12 @@ angular.module('snapshot-crates', [])
 
             var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
             //var url = $scope.buildURL($scope.crateModel, $scope.iov);
-            CratesAPI.getByURL(apiurl).then(function(data) {
+
+
+            CratesAPI.getByURL(apiurl).then( function(data) {
                 $scope.crateModel.resetModel(true);
-                $scope.crateModel.data = data;
+                $scope.crateModel.data = data.data;
+                console.log('CratesAPI data = '+JSON.stringify(data.data));
             });
 
 
@@ -124,7 +126,7 @@ angular.module('snapshot-crates', [])
       //              $scope.crateModel.resetModel(true);
         //            $scope.crateModel.data = data;
           //          //$location.path = url;
-            /        console.log(JSON.stringify($scope.crateModel));
+            //        console.log(JSON.stringify($scope.crateModel));
 //
   //              });
 
@@ -142,10 +144,10 @@ angular.module('snapshot-crates', [])
                         //var url = $scope.buildURL($scope.crateModel, $scope.iov);
                         console.log(apiurl);
                         //console.log(url);
-                        $http.get(apiurl).success(function (data, status, headers, config) {
+                        CratesAPI.getByURL(apiurl).then(function (data) {
                             model.child.resetModel(true);
                             console.log(JSON.stringify(data));
-                            model.child.data = data;
+                            model.child.data = data.data;
                             //$location.path = url;
                         });
                     }
