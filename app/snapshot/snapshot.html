@@ -2,11 +2,15 @@
     <div ng-controller="CratesCtrl">
     {{crateModel.iov}}
         <div class="container">
-            <button type="button" class="btn btn-default" ng-click="storeSnapshot(0)"> Store current snapshot {{dataStores.length}}</button>
-
-                 <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
-
-            <button type="button" class="btn btn-default btn-default" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
+            <div class="col-sm-2">
+            <button type="button" class="btn btn-default left" ng-click="storeSnapshot(0)"> Store {{dataStores.length}}</button>
+            </div>
+            <div class="col-sm-8">
+                 <button type="button" class="btn btn-default btn-warning btn-group text-center" ng-repeat="obj in dataStores">{{obj.label}}</button>
+            </div>
+            <div class="col-sm-2">
+            <button type="button" class="btn btn-default btn-default right" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
+            </div>
         </div>
 
         <div class="container">

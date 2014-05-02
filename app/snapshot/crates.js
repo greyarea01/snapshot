@@ -11,8 +11,8 @@ angular.module('snapshot-crates', [])
                     controller: 'CratesCtrl'
                 });
         }])
-    .controller('CratesCtrl', ['$scope', '$http', '$location','CratesDataStore',
-        function ($scope, $http, $location, CratesDataStore) {
+    .controller('CratesCtrl', ['$scope', '$http', '$location','CratesAPI','CratesDataStore',
+        function ($scope, $http, $location, CratesAPI, CratesDataStore) {
 
             $scope.dataStores=CratesDataStore;
 
@@ -59,7 +59,7 @@ angular.module('snapshot-crates', [])
                 // append current data store plus a label to dataStores array
     // FIXME - move this over to dataStore and give it an "add" method
                 var obj = {
-                    label: "hello",
+                    label: "S"+$scope.dataStores.length,
                     iov: $scope.iov,
                     model: $scope.crateModel.copy()
                 };
@@ -112,16 +112,21 @@ angular.module('snapshot-crates', [])
 
             var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
             //var url = $scope.buildURL($scope.crateModel, $scope.iov);
+            CratesAPI.getByURL(apiurl).then(function(data) {
+                $scope.crateModel.resetModel(true);
+                $scope.crateModel.data = data;
+            });
 
-            $http.get(apiurl)
-                .success(function (data, status, headers, config) {
-                    console.log('CratesCtrl:' + JSON.stringify(data));
-                    $scope.crateModel.resetModel(true);
-                    $scope.crateModel.data = data;
-                    //$location.path = url;
-                    console.log(JSON.stringify($scope.crateModel));
 
-                });
+//            $http.get(apiurl)
+  //              .success(function (data, status, headers, config) {
+    //                console.log('CratesCtrl:' + JSON.stringify(data));
+      //              $scope.crateModel.resetModel(true);
+        //            $scope.crateModel.data = data;
+          //          //$location.path = url;
+            /        console.log(JSON.stringify($scope.crateModel));
+//
+  //              });
 
             $scope.click = function(index, values, model) {
                 console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
