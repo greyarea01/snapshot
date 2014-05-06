@@ -6,131 +6,204 @@
 //
 //
 
-var configModel;
+var module = angular.module('snapshot-crates');
 
-configModel = function (label,mychild) {
-    var mymodel;
+module.factory('CrateModel', function() {
 
-    mymodel = {
-        child: null, // child object
 
-        selectedRow: -1, // id of selected row
-        selectedURLElement: -1, // index of selected element as it appears in the URL
-        selectedURLIndex: -1,
+    var fullModel={};
 
-        rowIndex: -1, // index in row values where row id is stored
-        elementIndices: [], // list of indices that can be used for urlElement selection
-        data: null, // data
-        processed: false, // flag used to avoid recursion in reset method
-        folders: [], // list of folders and IOV information
+    var makeModel = function (label, myChild) {
+        var myModel;
 
-        showRow: function(values) {
-            if(this.selectedRow>=0) {
-                return (values[this.rowIndex] === this.selectedRow);
-            }
-            return true;
-        },
+        myModel = {
+            child: null, // child object
 
-        resetModel: function (recurse) {
-            this.data = null;
-            this.selectedRow = -1;
-            this.selectedURLElement = -1;
-            this.selectedURLIndex = -1;
-            this.processed = true; // protection against infinite recursion
-            if (recurse && this.child != null && !this.child.processed) {
-                this.child.resetModel(true);
-            }
-            this.processed = false;
+            selectedRow: -1, // id of selected row
+            selectedURLElement: -1, // index of selected element as it appears in the URL
+            selectedURLIndex: -1,
 
-        },
+            rowIndex: -1, // index in row values where row id is stored
+            elementIndices: [], // list of indices that can be used for urlElement selection
+            data: null, // data
+            processed: false, // flag used to avoid recursion in reset method
+            folders: [], // list of folders and IOV information
 
-        setChild: function (obj) {
-            this.child = obj;
-        },
+            showRow: function (values) {
+                if (this.selectedRow >= 0) {
+                    return (values[this.rowIndex] === this.selectedRow);
+                }
+                return true;
+            },
 
-        deselect : function() {
-            this.selectedRow = -1;
-            this.selectedURLElement = -1;
-            this.selectedURLIndex = -1;
-            if( this.child) {
-                this.child.resetModel(true);
-            }
-        },
-        select: function(row, element, index) {
-            this.selectedRow = row;
-            this.selectedURLElement = element;
-            this.selectedURLIndex = index;
-        },
+            resetModel: function (recurse) {
+                this.data = null;
+                this.selectedRow = -1;
+                this.selectedURLElement = -1;
+                this.selectedURLIndex = -1;
+                this.processed = true; // protection against infinite recursion
+                if (recurse && this.child != null && !this.child.processed) {
+                    this.child.resetModel(true);
+                }
+                this.processed = false;
 
-        selectElement : function(index, values) {
-            // first check for selection or deselection
-            if(this.elementIndices.length>0) {
-                // then we can get values for the URL that aren't the row index
-                if( index in this.elementIndices) {
-                    // we clicked on one of the allowed boxes
-                    if( values[index] === this.selectedURLElement) {
-                        // then it's a deselect operation
+            },
+
+            setChild: function (obj) {
+                this.child = obj;
+            },
+
+            deselect: function () {
+                this.selectedRow = -1;
+                this.selectedURLElement = -1;
+                this.selectedURLIndex = -1;
+                if (this.child) {
+                    this.child.resetModel(true);
+                }
+            },
+            select: function (row, element, index) {
+                this.selectedRow = row;
+                this.selectedURLElement = element;
+                this.selectedURLIndex = index;
+            },
+
+            selectElement: function (index, values) {
+                // first check for selection or deselection
+                if (this.elementIndices.length > 0) {
+                    // then we can get values for the URL that aren't the row index
+                    if (index in this.elementIndices) {
+                        // we clicked on one of the allowed boxes
+                        if (values[index] === this.selectedURLElement) {
+                            // then it's a deselect operation
+                            this.deselect();
+                            return false;
+                        } else {
+                            // it's a select operation
+                            this.select(values[this.rowIndex], values[index], index);
+                            return true;
+                        }
+                    }
+                } else {
+                    if (values[this.rowIndex] === this.selectedRow) {
                         this.deselect();
                         return false;
                     } else {
-                        // it's a select operation
-                        this.select(values[this.rowIndex],values[index],index);
+                        this.select(values[this.rowIndex], values[this.rowIndex], this.rowIndex);
                         return true;
                     }
                 }
-            } else {
-                if(values[this.rowIndex] === this.selectedRow) {
-                    this.deselect();
-                    return false;
-                } else {
-                    this.select(values[this.rowIndex],values[this.rowIndex],this.rowIndex);
-                    return true;
+            },
+            copy: function () {
+
+                if (this.processed) {
+                    return null;
                 }
-            }
-        },
-        copy: function() {
+                var mycopy = {};
+                mycopy.selectedRow = this.selectedRow;
+                mycopy.selectedURLElement = this.selectedURLElement;
 
-            if( this.processed) {
-                return null;
-            }
-            var mycopy = {};
-            mycopy.selectedRow = this.selectedRow;
-            mycopy.selectedURLElement = this.selectedURLElement;
+                mycopy.rowIndex = this.rowIndex;
+                mycopy.elementIndices = angular.copy(this.elementIndices);
 
-            mycopy.rowIndex = this.rowIndex;
-            mycopy.elementIndices = angular.copy(this.elementIndices);
-
-            mycopy.data = angular.copy(this.data);
+                mycopy.data = angular.copy(this.data);
 //            mycopy.lastSelected=this.lastSelected;
-            mycopy.folders = null;
-            // copy over functions
-            mycopy.showRow = this.showRow;
-            mycopy.select = this.select;
-            mycopy.deselect = this.deselect;
+                mycopy.folders = null;
+                // copy over functions
+                mycopy.showRow = this.showRow;
+                mycopy.select = this.select;
+                mycopy.deselect = this.deselect;
 
-            mycopy.copy = this.copy;
-            mycopy.resetModel = this.resetModel;
-            mycopy.setChild = this.setChild;
-            mycopy.selectElement = this.selectElement;
+                mycopy.copy = this.copy;
+                mycopy.resetModel = this.resetModel;
+                mycopy.setChild = this.setChild;
+                mycopy.selectElement = this.selectElement;
 
-            mycopy.processed=false;
-            this.processed = true;
-            if( this.child) {
-                mycopy.child = this.child.copy();
-            } else {
-                mycopy.child = null;
+                mycopy.processed = false;
+                this.processed = true;
+                if (this.child) {
+                    mycopy.child = this.child.copy();
+                } else {
+                    mycopy.child = null;
+                }
+                this.processed = false;
+                return mycopy;
             }
-            this.processed=false;
-            return mycopy;
-        }
 
+
+        };
+
+        myModel.name = label;
+        if (myChild) {
+            myModel.child = myChild;
+        }
+        return myModel;
+    };
+
+
+    fullModel.chipModel = makeModel("chip",null);
+    fullModel.modModel = makeModel("mod", fullModel.chipModel);
+    fullModel.murModel = makeModel("mur", fullModel.modModel);
+    fullModel.rodModel = makeModel("rod", fullModel.murModel);
+    fullModel.crateModel = makeModel("crate", fullModel.rodModel);
+    fullModel.crateModel.rowIndex = 0;
+    fullModel.rodModel.rowIndex = 1;
+    fullModel.murModel.rowIndex = 2;
+    fullModel.modModel.rowIndex = 0;
+    fullModel.modModel.elementIndices = [1, 2];
+    fullModel.chipModel.rowIndex = 0;
+
+
+    fullModel.getList = function () {
+        return [
+            this.crateModel,
+            this.rodModel,
+            this.murModel,
+            this.modModel,
+            this.chipModel
+        ];
+    };
+
+    fullModel.getAPIURL = function (iov) {
+        var url = 'api/crates/' + iov + '/';
+        var model = this.crateModel;
+        var finished = false;
+        while (!finished) {
+            if (model.selectedRow >= 0) {
+                url += model.selectedURLElement + '/';
+                model = model.child;
+                if (model === null) {
+                    finished = true;
+                }
+            } else {
+                url += 'all';
+                finished = true;
+            }
+
+        }
+        return url;
 
     };
 
-    mymodel.name=label;
-    if(mychild) {
-        mymodel.child = mychild;
-    }
-    return mymodel;
+    fullModel.getURL = function (iov) {
+        var url = '/crates/' + iov + '/';
+        var model = topModel;
+        var finished = false;
+        while (!finished) {
+            if (model.selected >= 0) {
+                url += model.selectedURLElement + '/';
+                model = model.child;
+                if (model === null) {
+                    finished = true;
+                }
+            } else {
+                url += 'all';
+                finished = true;
+            }
 
-};
+        }
+        return url;
+    }
+
+    return fullModel;
+
+});

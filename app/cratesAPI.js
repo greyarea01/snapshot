@@ -6,13 +6,13 @@ var module = angular.module('snapshot');
 
 module.factory('CratesAPI', ['$http', function($http) {
     var api = {
-        getByURL: function(url) {
+        getByURL: function (url) {
             return $http.get(url).then(function (data, status, headers, config) {
                 return data;
             }); // returns a promise
         }
     };
-    return api;
+     return api;
 }]);
 
 
