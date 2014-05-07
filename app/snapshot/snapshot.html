@@ -1,16 +1,22 @@
 <div class="container">
 <div>
-    {{crateModel.iov}}
+    {{descriptor.str}}
         <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-body">
             <div class="col-sm-2">
-            <button type="button" class="btn btn-default left" ng-click="storeSnapshot(0)"> Store {{dataStores.length}}</button>
+            <button type="button" class="btn b
+            tn-default left" ng-click="storeSnapshot(0)"> Store {{dataStores.length}}</button>
             </div>
             <div class="col-sm-8">
                  <button type="button" class="btn btn-default btn-warning btn-group text-center" ng-repeat="obj in dataStores">{{obj.label}}</button>
             </div>
             <div class="col-sm-2">
-            <button type="button" class="btn btn-default btn-default right" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
+                <button type="button" class="btn btn-default right" ng-show="dataStores.length>0" ng-click="viewStore()">View</button>
+                <button type="button" class="btn btn-default btn-default right" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
             </div>
+                </div>
+                </div>
         </div>
 
         <div class="container">

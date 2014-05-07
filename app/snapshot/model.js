@@ -67,11 +67,32 @@ module.factory('CrateModel', function() {
                 this.selectedURLIndex = index;
             },
 
+            descriptor: function(obj) {
+                if( !this.data) {
+                    return obj;
+                }
+                obj.str+=' '+this.name+': ';
+                if( this.selectedURLElement >=0) {
+                    obj[this.name] = this.selectedURLElement;
+                    obj.str+=this.selectedURLElement;
+                }  else {
+                    obj[this.name] = 'all';
+                    obj.str+='all';
+                }
+                if( this.child) {
+                    this.child.descriptor(obj);
+                }
+                return obj;
+            },
+
             selectElement: function (index, values) {
                 // first check for selection or deselection
+                console.log('selectElement: '+this.elementIndices.length+' ' +this.rowIndex+' '+index);
                 if (this.elementIndices.length > 0) {
                     // then we can get values for the URL that aren't the row index
-                    if (index in this.elementIndices) {
+                    console.log('elementIndices: '+JSON.stringify(this.elementIndices));
+                    if (this.elementIndices.indexOf(index) >= 0) {
+                        console.log('selectElement: clicked!');
                         // we clicked on one of the allowed boxes
                         if (values[index] === this.selectedURLElement) {
                             // then it's a deselect operation
@@ -82,6 +103,8 @@ module.factory('CrateModel', function() {
                             this.select(values[this.rowIndex], values[index], index);
                             return true;
                         }
+                    } else {
+                        return false;
                     }
                 } else {
                     if (values[this.rowIndex] === this.selectedRow) {
@@ -117,8 +140,9 @@ module.factory('CrateModel', function() {
                 mycopy.resetModel = this.resetModel;
                 mycopy.setChild = this.setChild;
                 mycopy.selectElement = this.selectElement;
-
+                mycopy.descriptor = this.descriptor;
                 mycopy.processed = false;
+                mycopy.name = this.name;
                 this.processed = true;
                 if (this.child) {
                     mycopy.child = this.child.copy();
@@ -204,6 +228,13 @@ module.factory('CrateModel', function() {
         return url;
     }
 
+    fullModel.descriptor = function() {
+        var obj = {
+            str: ''
+        }
+
+        return this.crateModel.descriptor(obj);
+    }
     return fullModel;
 
 });

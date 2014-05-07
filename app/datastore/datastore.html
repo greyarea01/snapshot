@@ -1,0 +1,16 @@
+
+<div class="container">
+    {{dataList.length}}
+   <table class="table">
+       <thead>
+       <th> Label</th> <th>IOV</th> <th>Descriptor</th>
+       </thead>
+<tbody>
+    <tr ng-repeat="data in dataList">
+        <td> {{data.label}}</td>
+        <td> {{data.iov}}</td>
+        <td> {{data.descriptor.str}}</td>
+    </tr>
+</tbody>
+    </table>
+</div>
