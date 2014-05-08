@@ -205,7 +205,70 @@ module.factory('CrateModel', function() {
 
         }
         return url;
+    };
 
+    fullModel.getIndexList = function(iov) {
+       var indexList = [iov];
+       var model = topModel;
+        var finished = false;
+        while (!finished) {
+            if (model.selected >= 0) {
+                indexList.push(model.selectedURLElement);
+                model = model.child;
+                if (model === null) {
+                    finished = true;
+                }
+            } else {
+                indexList.push('all');
+                finished = true;
+            }
+
+        }
+        return indexList;
+    };
+
+    fullModel.getIndex = function(iov) {
+        var index = {
+            iov: 'now',
+            crate: 'all',
+            rod: null,
+            mur: null,
+            mod: null,
+            chip: null
+        };
+        index.iov = iov;
+
+        if( this.crateModel.selectedRow <0) {
+            return index;
+        }
+
+        index.crate = this.crateModel.selectedRow;
+        if( this.rodModel.selectedRow < 0) {
+            index.rod = 'all';
+            return index;
+        }
+        index.rod = this.rodModel.selectedRow;
+
+        if( this.murModel.selectedRow < 0) {
+            index.mur = 'all';
+            return index;
+        }
+
+        index.mur = this.murmodel.selectedRow;
+        if( this.modModel.selectedURLElement < 0) {
+            index.mod = 'all';
+            return index;
+        }
+
+        index.mod = this.modModel.selectedURLElement;
+
+        if( this.chipModel.selectedRow < 0) {
+            index.chip = 'all';
+            return index;
+        }
+
+        index.chip = this.chipModel.selectedRow;
+        return index;
     };
 
     fullModel.getURL = function (iov) {

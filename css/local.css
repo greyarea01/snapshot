@@ -2,3 +2,7 @@
 .table-scrollable {
     overflow-x: auto;
 }
+
+.cell-fixed {
+    word-wrap: break-word;
+}

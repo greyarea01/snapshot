@@ -20,22 +20,26 @@
         </div>
 
         <div class="container">
-            <div class="panel panel-default col-md-12">
+            <div class="panel panel-default row" ng-repeat="md in modelList" ng-show="md.data">
                 <div class="panel-body table-scrollable">
-            <table  class="table table-responsive col-md-12" ng-repeat="md in modelList">
-                <thead>
+
+                <table  class="table table-responsive">
+
+                    <thead>
                 <tr>
-                    <th style="word-wrap: break-word" ng-repeat="header in md.data.headers" class="col-xs-2">{{header}}</th>
+                    <th  ng-repeat="header in md.data.headers" class="col-lg-2">{{header}}</th>
                 </tr>
                 </thead>
                 <tr ng-repeat="row in md.data.rows" ng-show="md.showRow(row.values)">
-                    <td  style="word-wrap: break-word" ng-repeat="value in row.values" ng-click="click($index,row.values,md)">{{value}}</td>
+                    <td  ng-repeat="value in row.values" ng-click="click($index,row.values,md)" class="col-lg-2">{{value}}</td>
                 </tr>
 
                 </tbody>
+
             </table>
                 </div>
             </div>
+
         </div>
 
     </div>
