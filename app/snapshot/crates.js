@@ -36,7 +36,7 @@ angular.module('snapshot-crates', [])
                     iov: $scope.iov,
                     model: $scope.model.crateModel.copy()
                 };
-                console.log('Snapshot stored:' + JSON.stringify(obj));
+                console.log('Snapshot stored:' + ($scope.model.descriptor()).str);
                 $scope.dataStores.push(obj);
             };
 
@@ -48,7 +48,7 @@ angular.module('snapshot-crates', [])
             $scope.viewStore = function() {
                 console.log('view clicked');
                 $location.path('/store');
-            }
+            };
             //var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
             //var url = $scope.buildURL($scope.crateModel, $scope.iov);
             var apiurl = $scope.model.getAPIURL($scope.iov);
@@ -57,7 +57,8 @@ angular.module('snapshot-crates', [])
             CratesAPI.getByURL(apiurl).then( function(data) {
                 $scope.model.crateModel.resetModel(true);
                 $scope.model.crateModel.data = data.data;
-                console.log('CratesAPI data = '+JSON.stringify(data.data));
+                console.log('Grabbed data from: '+apiurl);
+                console.log('Setting CratesAPI data = '+JSON.stringify(data.data));
                 $scope.descriptor = $scope.model.descriptor();
             });
 

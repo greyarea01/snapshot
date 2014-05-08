@@ -1,9 +1,14 @@
 <div class="container">
 
         <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-body">
             <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
         </div>
-
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body col-md-12 table-scrollable">
         <table class="table table-hover table-condensed">
             <thead>
             <tr>
@@ -18,6 +23,7 @@
             </tr>
             </tbody>
         </table>
-
+            </div>
+        </div>
 
 </div>
