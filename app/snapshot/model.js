@@ -173,7 +173,7 @@ module.factory('CrateModel', function() {
     fullModel.rodModel.rowIndex = 1;
     fullModel.murModel.rowIndex = 2;
     fullModel.modModel.rowIndex = 0;
-    fullModel.modModel.elementIndices = [1, 2];
+    fullModel.modModel.elementIndices = [1];
     fullModel.chipModel.rowIndex = 0;
 
 
@@ -289,15 +289,15 @@ module.factory('CrateModel', function() {
 
         }
         return url;
-    }
+    };
 
     fullModel.descriptor = function() {
         var obj = {
             str: ''
-        }
+        };
 
         return this.crateModel.descriptor(obj);
-    }
+    };
     return fullModel;
 
 });

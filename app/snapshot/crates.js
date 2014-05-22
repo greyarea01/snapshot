@@ -9,10 +9,36 @@ angular.module('snapshot-crates', [])
                 .when('/crates', {
                     templateUrl: 'app/snapshot/snapshot.html',
                     controller: 'CratesCtrl'
-                });
+                })
+                .when('/crates/:iov', {
+                    templateUrl: 'app/snapshot/snapshot.html',
+                    controller: 'CratesCtrl'
+                })
+                .when('/crates/:iov/:crate', {
+                    templateUrl: 'app/snapshot/snapshot.html',
+                    controller: 'CratesCtrl'
+                })
+                .when('/crates/:iov/:crate/:rod', {
+                    templateUrl: 'app/snapshot/snapshot.html',
+                    controller: 'CratesCtrl'
+                })
+                .when('/crates/:iov/:crate/:rod/:mur', {
+                    templateUrl: 'app/snapshot/snapshot.html',
+                    controller: 'CratesCtrl'
+                })
+                .when('/crates/:iov/:crate/:rod/:mur/:mod', {
+                    templateUrl: 'app/snapshot/snapshot.html',
+                    controller: 'CratesCtrl'
+                })
+                .when('/crates/:iov/:crate/:rod/:mur/:mod/:chip', {
+                    templateUrl: 'app/snapshot/snapshot.html',
+                    controller: 'CratesCtrl'
+                })
+                .otherwise({redirectTo:'/crates'})
+
         }])
-    .controller('CratesCtrl', ['$scope', '$location','CratesAPI','CratesDataStore','CrateModel',
-        function ($scope, $location, CratesAPI, CratesDataStore,CrateModel) {
+    .controller('CratesCtrl', ['$scope', '$location','$routeParams','CratesAPI','CratesDataStore','CrateModel',
+        function ($scope, $location, $routeParams, CratesAPI, CratesDataStore,CrateModel) {
 
             $scope.dataStores=CratesDataStore;
             $scope.model = CrateModel;
@@ -74,11 +100,7 @@ angular.module('snapshot-crates', [])
                     // if there is a child to give the data to...
                     if( model.child) {
                         var apiurl = $scope.model.getAPIURL($scope.iov);
-    //   var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
-                        // this will eventually be used with $location
-                        //var url = $scope.buildURL($scope.crateModel, $scope.iov);
                         console.log(apiurl);
-                        //console.log(url);
                         CratesAPI.getByURL(apiurl).then(function (data) {
                             model.child.resetModel(true);
                             console.log(JSON.stringify(data));
