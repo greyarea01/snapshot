@@ -72,13 +72,13 @@ angular.module('snapshot-diff', [])
                 var nstores = dataStore.length;
                 for(var i = 0;i<nstores;++i) {
                     store = dataStore[i];
-                    console.log('Processing '+store.label+' '+store.model.selectedRow+' '+(i+1)+'/'+nstores);
+                    console.log('Processing '+store.label+' '+store.model.selectedURLElement+' '+(i+1)+'/'+nstores);
                     headers = [];
                     model = store.model;
-                    while (model && model.selectedRow>=0) {
+                    while (model && model.selectedURLElement>=0) {
                         nMatched = 0;
                         index = model.rowIndex;
-                        element = model.selectedRow;
+                        element = model.selectedURLElement;
                         data = model.data;
                         var nheaders = data.headers.length;
                         for(var j = 0;j<nheaders;++j) {
@@ -86,7 +86,7 @@ angular.module('snapshot-diff', [])
                         }
                         model = model.child;
                         if (model) {
-                            if (model.selectedRow < 0) {
+                            if (model.selectedURLElement < 0) {
                                 model = null; // stop if there is a model but no element was selected
                             }
                         }
@@ -119,10 +119,10 @@ angular.module('snapshot-diff', [])
                     values = [];
                     counter =0;
                     model = store.model;
-                    console.log('Processing '+store.label+' '+store.model.selectedRow+' '+(i+1)+'/'+nstores);
-                    while(model && model.selectedRow>=0) {
+                    console.log('Processing '+store.label+' '+store.model.selectedURLElement+' '+(i+1)+'/'+nstores);
+                    while(model && model.selectedURLElement>=0) {
                         index = model.rowIndex;
-                        element = model.selectedRow;
+                        element = model.selectedURLElement;
                         data = model.data;
                         var nrows = data.rows.length;
                         for(var j =0;j<nrows;++j) {
