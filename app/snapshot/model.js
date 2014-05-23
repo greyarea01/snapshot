@@ -189,7 +189,7 @@ module.factory('CrateModel', function() {
         var model = this.crateModel;
         var finished = false;
         while (!finished) {
-            if (model.selectedRow >= 0) {
+            if (model.selectedURLElement >= 0) {
                 url += model.selectedURLElement + '/';
                 model = model.child;
                 if (model === null) {

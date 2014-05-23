@@ -130,7 +130,7 @@ angular.module('snapshot-crates', [])
 
     // click handler
             $scope.click = function(index, values, model) {
-                console.log(JSON.stringify($scope.modelList));
+                console.log('Model List is: '+JSON.stringify($scope.modelList));
                 console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
 
                 // was it a select or a deselect
