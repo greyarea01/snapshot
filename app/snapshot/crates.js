@@ -134,7 +134,7 @@ angular.module('snapshot-crates', [])
                 console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
 
                 // was it a select or a deselect
-                if(model.selectElement(index,values)) {
+                if(model.selectElement(values)) {
                     console.log('Select operation');
                     // a select operation - lets grab some new data
                     // if there is a child to give the data to...

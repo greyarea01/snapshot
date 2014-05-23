@@ -19,28 +19,32 @@ module.factory('CrateModel', function() {
         myModel = {
             child: null, // child object
 
-            selectedRow: -1, // id of selected row
+            // modify so row index is the URL element
+            // means we don't need both anymore
+            // get rid of selectedRow and rowIndex
+            //selectedRow: -1, // id of selected row
             selectedURLElement: -1, // index of selected element as it appears in the URL
-            selectedURLIndex: -1,
+            rowIndex: -1,
 
-            rowIndex: -1, // index in row values where row id is stored
-            elementIndices: [], // list of indices that can be used for urlElement selection
+            //rowIndex: -1, // index in row values where row id is stored
+            // removed this functionality - not needed I think
+    //            elementIndices: [], // list of indices that can be used for urlElement selection
             data: null, // data
             processed: false, // flag used to avoid recursion in reset method
             folders: [], // list of folders and IOV information
 
             showRow: function (values) {
-                if (this.selectedRow >= 0) {
-                    return (values[this.rowIndex] === this.selectedRow);
+                if (this.selectedURLElement >= 0) { // only works for positive definite URL indices
+                    return (values[this.rowIndex] === this.selectedURLElement);
                 }
                 return true;
             },
 
             resetModel: function (recurse) {
                 this.data = null;
-                this.selectedRow = -1;
+                //this.selectedRow = -1;
                 this.selectedURLElement = -1;
-                this.selectedURLIndex = -1;
+                //this.selectedURLIndex = -1;
                 this.processed = true; // protection against infinite recursion
                 if (recurse && this.child != null && !this.child.processed) {
                     this.child.resetModel(true);
@@ -54,17 +58,18 @@ module.factory('CrateModel', function() {
             },
 
             deselect: function () {
-                this.selectedRow = -1;
+                //this.selectedRow = -1;
                 this.selectedURLElement = -1;
-                this.selectedURLIndex = -1;
+                //   this.selectedURLIndex = -1;
                 if (this.child) {
                     this.child.resetModel(true);
                 }
             },
-            select: function (row, element, index) {
-                this.selectedRow = row;
+    //            select: function (row, element, index) {
+            select: function(element) {
+                //this.selectedRow = row;
                 this.selectedURLElement = element;
-                this.selectedURLIndex = index;
+                //this.selectedURLIndex = index;
             },
 
             descriptor: function(obj) {
@@ -85,35 +90,27 @@ module.factory('CrateModel', function() {
                 return obj;
             },
 
-            selectElement: function (index, values) {
-                // first check for selection or deselection
-                console.log('selectElement: '+this.elementIndices.length+' ' +this.rowIndex+' '+index);
-                if (this.elementIndices.length > 0) {
-                    // then we can get values for the URL that aren't the row index
-                    console.log('elementIndices: '+JSON.stringify(this.elementIndices));
-                    if (this.elementIndices.indexOf(index) >= 0) {
-                        console.log('selectElement: clicked!');
-                        // we clicked on one of the allowed boxes
-                        if (values[index] === this.selectedURLElement) {
-                            // then it's a deselect operation
-                            this.deselect();
-                            return false;
-                        } else {
-                            // it's a select operation
-                            this.select(values[this.rowIndex], values[index], index);
-                            return true;
-                        }
-                    } else {
-                        return false;
-                    }
-                } else {
-                    if (values[this.rowIndex] === this.selectedRow) {
+            selectElement: function(values) {
+                // check for selection or deselection
+                // three possiblities:
+                //   i) click on same row - deselect row
+                //   ii) click on different row - deselect row and select other row
+                //  iii) click on row with no row selected - select row
+
+                if( this.selectedURLElement>=0) {
+                    // deselection
+                    // clicked on selected row?
+                    if( this.selectedURLElement === values[this.rowIndex]) {
                         this.deselect();
                         return false;
                     } else {
-                        this.select(values[this.rowIndex], values[this.rowIndex], this.rowIndex);
+                        this.deselect();
+                        this.select(values[this.rowIndex]);
                         return true;
                     }
+                } else {
+                    this.select(values[this.rowIndex]);
+                   return true;
                 }
             },
             copy: function () {
@@ -122,11 +119,11 @@ module.factory('CrateModel', function() {
                     return null;
                 }
                 var mycopy = {};
-                mycopy.selectedRow = this.selectedRow;
+    //                mycopy.selectedRow = this.selectedRow;
                 mycopy.selectedURLElement = this.selectedURLElement;
 
-                mycopy.rowIndex = this.rowIndex;
-                mycopy.elementIndices = angular.copy(this.elementIndices);
+      //          mycopy.rowIndex = this.rowIndex;
+        //        mycopy.elementIndices = angular.copy(this.elementIndices);
 
                 mycopy.data = angular.copy(this.data);
 //            mycopy.lastSelected=this.lastSelected;
@@ -173,7 +170,7 @@ module.factory('CrateModel', function() {
     fullModel.rodModel.rowIndex = 1;
     fullModel.murModel.rowIndex = 2;
     fullModel.modModel.rowIndex = 0;
-    fullModel.modModel.elementIndices = [1];
+    fullModel.modModel.rowIndex= 1;
     fullModel.chipModel.rowIndex = 0;
     fullModel.iov = 'now';
 
