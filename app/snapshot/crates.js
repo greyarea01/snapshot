@@ -40,13 +40,53 @@ angular.module('snapshot-crates', [])
     .controller('CratesCtrl', ['$scope', '$location','$routeParams','CratesAPI','CratesDataStore','CrateModel',
         function ($scope, $location, $routeParams, CratesAPI, CratesDataStore,CrateModel) {
 
+            // convert the $rootParams into an index for the data
+            //
+            $scope.dataIndex= {
+                iov: null,
+                crate: null,
+                rod: null,
+                mur: null,
+                mod: null,
+                chip: null
+            };
+
+            // loop over the properties and stop after the first one that is undefined
+            var propertyList=['crate','rod','mur','mod','chip'];
+            var n = propertyList.length;
+
+            if (! $routeParams.iov) {
+                $scope.dataIndex.iov='now';
+                $scope.dataIndex.crate='all';
+            } else {
+                $scope.iov=$routeParams.iov;
+                $scope.dataIndex.iov=$routeParams.iov;
+            }
+            var finished = false
+            var i=0;
+            var field;
+            while( !finished) {
+                field=propertyList[i];
+                    if( ! $routeParams[field]) {
+                        $scope.dataIndex[field] = 'all';
+                        finished=true;
+                    } else {
+                        $scope.dataIndex[field] = $routeParams[field]
+                        i++;
+                    }
+                if( i === n) {
+                    finished = true;
+                }
+            }
+
+
             $scope.dataStores=CratesDataStore;
             $scope.model = CrateModel;
-            $scope.iov = 'now';
             $scope.modelList = $scope.model.getList();
             $scope.descriptor = '';
 
     // needed for nested ng-repeats to pass the current model down to the nested bits
+            // is this still needed? check... FIXME
             $scope.thisModel = null;
             $scope.setThisModel = function(model) {
                 console.log('setthisModel :'+model.name);

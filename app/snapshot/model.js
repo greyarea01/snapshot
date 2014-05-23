@@ -2,8 +2,8 @@
  * Created by hays on 04/04/14.
  */
 
-// an object to hold the whole model
 //
+// this factory handles the current model state for the snapshot app
 //
 
 var module = angular.module('snapshot-crates');
@@ -175,7 +175,7 @@ module.factory('CrateModel', function() {
     fullModel.modModel.rowIndex = 0;
     fullModel.modModel.elementIndices = [1];
     fullModel.chipModel.rowIndex = 0;
-
+    fullModel.iov = 'now';
 
     fullModel.getList = function () {
         return [
@@ -187,8 +187,8 @@ module.factory('CrateModel', function() {
         ];
     };
 
-    fullModel.getAPIURL = function (iov) {
-        var url = 'api/crates/' + iov + '/';
+    fullModel.getAPIURL = function () {
+        var url = 'api/crates/' + this.iov + '/';
         var model = this.crateModel;
         var finished = false;
         while (!finished) {
@@ -207,8 +207,8 @@ module.factory('CrateModel', function() {
         return url;
     };
 
-    fullModel.getIndexList = function(iov) {
-       var indexList = [iov];
+    fullModel.getIndexList = function() {
+       var indexList = [this.iov];
        var model = topModel;
         var finished = false;
         while (!finished) {
@@ -227,9 +227,9 @@ module.factory('CrateModel', function() {
         return indexList;
     };
 
-    fullModel.getIndex = function(iov) {
+    fullModel.getIndex = function() {
         var index = {
-            iov: 'now',
+            iov: this.iov,
             crate: 'all',
             rod: null,
             mur: null,
