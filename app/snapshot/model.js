@@ -18,22 +18,14 @@ module.factory('CrateModel', function() {
 
         myModel = {
             child: null, // child object
-
-            // modify so row index is the URL element
-            // means we don't need both anymore
-            // get rid of selectedRow and rowIndex
-            //selectedRow: -1, // id of selected row
             selectedURLElement: -1, // index of selected element as it appears in the URL
             rowIndex: -1,
-
-            //rowIndex: -1, // index in row values where row id is stored
-            // removed this functionality - not needed I think
-    //            elementIndices: [], // list of indices that can be used for urlElement selection
             data: null, // data
             processed: false, // flag used to avoid recursion in reset method
             folders: [], // list of folders and IOV information
 
             showRow: function (values) {
+                console.log(this.selectedURLElement+' : '+values[this.rowIndex]);
                 if (this.selectedURLElement >= 0) { // only works for positive definite URL indices
                     return (values[this.rowIndex] === this.selectedURLElement);
                 }
@@ -58,18 +50,13 @@ module.factory('CrateModel', function() {
             },
 
             deselect: function () {
-                //this.selectedRow = -1;
                 this.selectedURLElement = -1;
-                //   this.selectedURLIndex = -1;
                 if (this.child) {
                     this.child.resetModel(true);
                 }
             },
-    //            select: function (row, element, index) {
             select: function(element) {
-                //this.selectedRow = row;
                 this.selectedURLElement = element;
-                //this.selectedURLIndex = index;
             },
 
             descriptor: function(obj) {
@@ -96,7 +83,10 @@ module.factory('CrateModel', function() {
                 //   i) click on same row - deselect row
                 //   ii) click on different row - deselect row and select other row
                 //  iii) click on row with no row selected - select row
-
+                // ii & iii might trigger new loading of data i should not
+                // return true in cases ii and iii and false in case i to
+                // signal to the caller that the index has changed and new data
+                // might need to be fetched
                 if( this.selectedURLElement>=0) {
                     // deselection
                     // clicked on selected row?
@@ -119,14 +109,8 @@ module.factory('CrateModel', function() {
                     return null;
                 }
                 var mycopy = {};
-    //                mycopy.selectedRow = this.selectedRow;
                 mycopy.selectedURLElement = this.selectedURLElement;
-
-      //          mycopy.rowIndex = this.rowIndex;
-        //        mycopy.elementIndices = angular.copy(this.elementIndices);
-
                 mycopy.data = angular.copy(this.data);
-//            mycopy.lastSelected=this.lastSelected;
                 mycopy.folders = null;
                 // copy over functions
                 mycopy.showRow = this.showRow;
@@ -169,8 +153,8 @@ module.factory('CrateModel', function() {
     fullModel.crateModel.rowIndex = 0;
     fullModel.rodModel.rowIndex = 1;
     fullModel.murModel.rowIndex = 2;
-    fullModel.modModel.rowIndex = 0;
-    fullModel.modModel.rowIndex= 1;
+ //   fullModel.modModel.rowIndex = 0; // to use module row
+   fullModel.modModel.rowIndex= 1; // to use moduleID - this is the current API - will change in next version
     fullModel.chipModel.rowIndex = 0;
     fullModel.iov = 'now';
 
@@ -183,7 +167,7 @@ module.factory('CrateModel', function() {
             this.chipModel
         ];
     };
-
+// this will go away in the later version... all we need is the index
     fullModel.getAPIURL = function () {
         var url = 'api/crates/' + this.iov + '/';
         var model = this.crateModel;
@@ -204,9 +188,10 @@ module.factory('CrateModel', function() {
         return url;
     };
 
+    // get the index as a list of values
     fullModel.getIndexList = function() {
        var indexList = [this.iov];
-       var model = topModel;
+       var model = this.crateModel;
         var finished = false;
         while (!finished) {
             if (model.selected >= 0) {
@@ -223,7 +208,7 @@ module.factory('CrateModel', function() {
         }
         return indexList;
     };
-
+// get the index as an object (generally more robust I think)
     fullModel.getIndex = function() {
         var index = {
             iov: this.iov,
@@ -233,7 +218,7 @@ module.factory('CrateModel', function() {
             mod: null,
             chip: null
         };
-        index.iov = iov;
+//        index.iov = iov;
 
         if( this.crateModel.selectedRow <0) {
             return index;
@@ -267,13 +252,13 @@ module.factory('CrateModel', function() {
         index.chip = this.chipModel.selectedRow;
         return index;
     };
-
-    fullModel.getURL = function (iov) {
-        var url = '/crates/' + iov + '/';
-        var model = topModel;
+    // this probably should live somewhere else?
+    fullModel.getURL = function () {
+        var url = '/crates/' + this.iov + '/';
+        var model = this.crateModel;
         var finished = false;
         while (!finished) {
-            if (model.selected >= 0) {
+            if (model.selectedURLElement >= 0) {
                 url += model.selectedURLElement + '/';
                 model = model.child;
                 if (model === null) {

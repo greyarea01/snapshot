@@ -37,11 +37,11 @@ angular.module('snapshot-crates', [])
                 .otherwise({redirectTo:'/crates'})
 
         }])
-    .controller('CratesCtrl', ['$scope', '$location','$routeParams','CratesAPI','CratesDataStore','CrateModel',
-        function ($scope, $location, $routeParams, CratesAPI, CratesDataStore,CrateModel) {
+    .controller('CratesCtrl', ['$scope', '$location','$routeParams','CratesData','CratesDataStore','CrateModel',
+        function ($scope, $location, $routeParams, CratesData, CratesDataStore,CrateModel) {
 
             // convert the $rootParams into an index for the data
-            //
+            // set index to initial values
             $scope.dataIndex= {
                 iov: null,
                 crate: null,
@@ -50,7 +50,8 @@ angular.module('snapshot-crates', [])
                 mod: null,
                 chip: null
             };
-
+            $scope.loaded=false;
+            // now parse the URL to fill the index as appropriate
             // loop over the properties and stop after the first one that is undefined
             var propertyList=['crate','rod','mur','mod','chip'];
             var n = propertyList.length;
@@ -58,6 +59,7 @@ angular.module('snapshot-crates', [])
             if (! $routeParams.iov) {
                 $scope.dataIndex.iov='now';
                 $scope.dataIndex.crate='all';
+              //  $location.path='/crates/now/all';
             } else {
                 $scope.iov=$routeParams.iov;
                 $scope.dataIndex.iov=$routeParams.iov;
@@ -79,22 +81,29 @@ angular.module('snapshot-crates', [])
                 }
             }
 
-
+    // for saving snapshots
             $scope.dataStores=CratesDataStore;
+    // the currently model
             $scope.model = CrateModel;
-            $scope.modelList = $scope.model.getList();
+    // interface for updating the current model
+            $scope.data = CratesData;
+    // model list used for the view - enables use of ng-repeat to generate a table for each level
+            // of the nested model
+            $scope.modelList=[];
+    // a descriptor in the view for debugging
             $scope.descriptor = '';
 
-    // needed for nested ng-repeats to pass the current model down to the nested bits
-            // is this still needed? check... FIXME
-            $scope.thisModel = null;
-            $scope.setThisModel = function(model) {
-                console.log('setthisModel :'+model.name);
-                $scope.thisModel = model;
-            };
+          //  $scope.thisModel = null;
+          //  $scope.setThisModel = function(model) {
+          //      console.log('setthisModel :'+model.name);
+          //      $scope.thisModel = model;
+          //  };
 
             // functions for buttons
             $scope.storeSnapshot = function() {
+                if(!$scope.loaded) {
+                    return;
+                }
                 // append current data store plus a label to dataStores array
     // FIXME - move this over to dataStore and give it an "add" method?
                 var obj = {
@@ -107,19 +116,81 @@ angular.module('snapshot-crates', [])
             };
 
             $scope.diff = function() {
+                if(!$scope.loaded) {
+                    return;
+                }
                 console.log('compare clicked');
                 $location.path('/diff');
             };
 
             $scope.viewStore = function() {
+                if(!$scope.loaded) {
+                    return;
+                }
                 console.log('view clicked');
                 $location.path('/store');
             };
+
+    // click handler
+            // index = column in the row that was clicked
+            // values = values in the row
+            // model = model providing the data for the table that was clicked
+            // the model knows which column is used to index the row
+            // and which column is used to generate the URL
+            $scope.click = function(index, values, model) {
+                if( !$scope.loaded) {
+                    console.log("clicked before loading finished");
+                    return;
+                }
+//                console.log('Model List is: '+JSON.stringify($scope.modelList));
+                console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
+// select or deselect now involve a URL change...
+                model.selectElement(values);
+                //var index = model.getIndex();
+                var url = $scope.model.getURL();
+                // this should cause a reload
+                $location.path(url);
+
+                // was it a select or a deselect
+                //if(model.selectElement(values)) {
+                  //  console.log('Select operation');
+                    // a select operation - lets grab some new data
+                    // if there is a child to give the data to...
+                    // FIXME - update to use the cratesData factory
+                    // just set up the index and go call the crateData api
+                    // in fact the selectElement should set up the index
+
+                    // update the model with new data:
+
+                   // if( model.child) {
+                     //   var apiurl = $scope.model.getAPIURL($scope.iov);
+                     //   console.log(apiurl);
+                     //   CratesAPI.getByURL(apiurl).then(function (data) {
+                     //       model.child.resetModel(true);
+                     //       console.log(JSON.stringify(data));
+                     //       model.child.data = data.data;
+                     //       $scope.descriptor = $scope.model.descriptor();
+                      //      //$location.path = url;
+                     //   });
+                    //} else {
+                    //    $scope.descriptor = $scope.model.descriptor();
+                   // }
+                //} else {
+                //    console.log('Deselect operation');
+                  // was a deselect - nothing to do at the moment
+                //}
+
+            };
+
             //var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
             //var url = $scope.buildURL($scope.crateModel, $scope.iov);
-            var apiurl = $scope.model.getAPIURL($scope.iov);
-
-
+            //var apiurl = $scope.model.getAPIURL($scope.iov);
+            $scope.data.getModelByIndex($scope.dataIndex).then(function(){
+                $scope.descriptor=$scope.model.descriptor;
+                $scope.modelList = $scope.model.getList();
+                $scope.loaded = true;
+            });
+/*
             CratesAPI.getByURL(apiurl).then( function(data) {
                 $scope.model.crateModel.resetModel(true);
                 $scope.model.crateModel.data = data.data;
@@ -127,36 +198,5 @@ angular.module('snapshot-crates', [])
                 console.log('Setting CratesAPI data = '+JSON.stringify(data.data));
                 $scope.descriptor = $scope.model.descriptor();
             });
-
-    // click handler
-            $scope.click = function(index, values, model) {
-                console.log('Model List is: '+JSON.stringify($scope.modelList));
-                console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
-
-                // was it a select or a deselect
-                if(model.selectElement(values)) {
-                    console.log('Select operation');
-                    // a select operation - lets grab some new data
-                    // if there is a child to give the data to...
-                    if( model.child) {
-                        var apiurl = $scope.model.getAPIURL($scope.iov);
-                        console.log(apiurl);
-                        CratesAPI.getByURL(apiurl).then(function (data) {
-                            model.child.resetModel(true);
-                            console.log(JSON.stringify(data));
-                            model.child.data = data.data;
-                            $scope.descriptor = $scope.model.descriptor();
-                            //$location.path = url;
-                        });
-                    } else {
-                        $scope.descriptor = $scope.model.descriptor();
-                    }
-                } else {
-                    console.log('Deselect operation');
-                  // was a deselect - nothing to do at the moment
-                }
-
-            };
-
-
+*/
         }]);

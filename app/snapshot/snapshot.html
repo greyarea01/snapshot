@@ -1,6 +1,9 @@
 <div class="container">
 <div>
     {{descriptor.str}}
+    <div class="container" ng-show="!loaded">
+        <h1 class="text-danger"> Loading! </h1>
+    </div>
         <div class="container">
             <div class="panel panel-default">
                 <div class="panel-body">
