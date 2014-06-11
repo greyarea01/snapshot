@@ -16,10 +16,12 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
             //var currentModelIndex = model.getIndex();
             var promises = [];
             var base = 'api/crates/' + cratesIndex.iov;
+            var modbase ='api/modules/' + cratesIndex.iov;
             var cr=-1;
             var rd=-1;
             var mr=-1;
             var md=-1;
+            var mid=-1;
             var ch=-1;
             if(cratesIndex.crate!=null && cratesIndex.crate!='all') { cr=parseInt(cratesIndex.crate);}
             if(cratesIndex.rod!=null && cratesIndex.rod!='all') { rd=parseInt(cratesIndex.rod);}
@@ -63,19 +65,33 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                                 model.modModel.data = res.data;
                                 model.modModel.selectedURLElement = md;
                                 console.log('CratesData: got crates : '+cr+' '+rd+' '+mr+' '+md);
+                                return model.modModel.data['rows'];
+                            }).then(
+                        function(rows) { // chained to the module promise...
+                            // need to find the module id.
+                            // we know the row number
+                            var n=rows.length;
+                            for( var i = 0;i<n;++i) {
+                                values = rows[i]["values"];
+                                console.log('row processing: '+values[0]+' '+values[1]);
+                                if (values[0] === md) {
+                                    mid = values[1];
+                                }
+                            }// could be optimised to not loop over the whole thing.... i suppose
 
-                            }));
-                        if (md >= 0) {
+                            if( mid>=0) {
+                                modbase += '/'+mid;
+                                console.log('CratesData: ' + modbase);
+                                return crateAPI.getByURL(modbase + '/all').then(
+                                    function (res) {
+                                        console.log(JSON.stringify(res.data));
+                                        model.chipModel.data = res.data;
+                                        model.chipModel.selectedURLElement = ch;
+                                        console.log('CratesData: got crates : ' + mid + ' ' + ch);
+                                    });
+                            }
+                        }));
 
-                        base += '/' + cratesIndex.mod;
-                        console.log('CratesData: ' + base);
-                        promises.push(crateAPI.getByURL(base + '/all').then(
-                            function (res) {
-                                model.chipModel.data = res.data;
-                                model.chipModel.selectedURLElement = ch;
-                                console.log('CratesData: got crates : '+cr+' '+rd+' '+mr+' '+md+' '+ch);
-                            }));
-                        }
                     }
                 }
             }
