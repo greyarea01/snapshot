@@ -156,7 +156,6 @@ angular.module('snapshot-crates', [])
                   //  console.log('Select operation');
                     // a select operation - lets grab some new data
                     // if there is a child to give the data to...
-                    // FIXME - update to use the cratesData factory
                     // just set up the index and go call the crateData api
                     // in fact the selectElement should set up the index
 

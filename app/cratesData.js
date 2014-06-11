@@ -8,10 +8,10 @@
 
 var module = angular.module('snapshot');
 
-module.factory('CratesData', ['CratesAPI','CrateModel','$q', function(CratesAPI,CrateModel,$q) {
+module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTTP,CrateModel,$q) {
     var api = {
         getModelByIndex: function (cratesIndex) {
-            var crateAPI = CratesAPI;
+            var crateAPI = CratesHTTP;
             var model = CrateModel;
             //var currentModelIndex = model.getIndex();
             var promises = [];
@@ -52,6 +52,7 @@ module.factory('CratesData', ['CratesAPI','CrateModel','$q', function(CratesAPI,
                             model.murModel.data = res.data;
                             model.murModel.selectedURLElement = mr;
                             console.log('CratesData: got crates : '+cr+' '+rd+' '+mr);
+                            console.log('CratesData: *** '+JSON.stringify(res.data));
                         }));
                     if(mr>=0) {
                         base += '/' + cratesIndex.mur;
@@ -78,13 +79,9 @@ module.factory('CratesData', ['CratesAPI','CrateModel','$q', function(CratesAPI,
                     }
                 }
             }
-            return $q.all(promises);
+            return $q.all(promises); // sync on all requests
         }
     };
-    //FIXME: need to modify original click methods to just work on rows instead of elements
-    // overly complex and doesn't map onto the API properly
-    // then should just call: model.crateModel.select(index)
-    // to set that row as selected and it should figure out the correct row etc
 
     return api;
 }]);

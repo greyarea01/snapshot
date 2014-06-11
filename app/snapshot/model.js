@@ -153,8 +153,8 @@ module.factory('CrateModel', function() {
     fullModel.crateModel.rowIndex = 0;
     fullModel.rodModel.rowIndex = 1;
     fullModel.murModel.rowIndex = 2;
- //   fullModel.modModel.rowIndex = 0; // to use module row
-   fullModel.modModel.rowIndex= 1; // to use moduleID - this is the current API - will change in next version
+    fullModel.modModel.rowIndex = 0; // to use module row
+//   fullModel.modModel.rowIndex= 1; // to use moduleID
     fullModel.chipModel.rowIndex = 0;
     fullModel.iov = 'now';
 
@@ -216,40 +216,43 @@ module.factory('CrateModel', function() {
             rod: null,
             mur: null,
             mod: null,
+            modID: null,
             chip: null
         };
 //        index.iov = iov;
 
-        if( this.crateModel.selectedRow <0) {
+        if( this.crateModel.selectedURLElement <0) {
             return index;
         }
 
-        index.crate = this.crateModel.selectedRow;
-        if( this.rodModel.selectedRow < 0) {
+        index.crate = this.crateModel.selectedURLElement;
+        if( this.rodModel.selectedURLElement < 0) {
             index.rod = 'all';
             return index;
         }
-        index.rod = this.rodModel.selectedRow;
+        index.rod = this.rodModel.selectedURLElement;
 
-        if( this.murModel.selectedRow < 0) {
+        if( this.murModel.selectedURLElement < 0) {
             index.mur = 'all';
             return index;
         }
 
-        index.mur = this.murmodel.selectedRow;
+        index.mur = this.murmodel.selectedURLElement;
         if( this.modModel.selectedURLElement < 0) {
             index.mod = 'all';
             return index;
         }
 
         index.mod = this.modModel.selectedURLElement;
+// need to find the module ID!
 
-        if( this.chipModel.selectedRow < 0) {
+
+        if( this.chipModel.selectedURLElement < 0) {
             index.chip = 'all';
             return index;
         }
 
-        index.chip = this.chipModel.selectedRow;
+        index.chip = this.chipModel.selectedURLElement;
         return index;
     };
     // this probably should live somewhere else?
