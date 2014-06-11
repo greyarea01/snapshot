@@ -4,7 +4,7 @@
 
 var module = angular.module('snapshot');
 
-module.factory('CratesAPI', ['$http', function($http) {
+module.factory('CratesHTTP', ['$http', function($http) {
     var api = {
         getByURL: function (url) {
             return $http.get(url).then(function (data, status, headers, config) {
