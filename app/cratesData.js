@@ -23,6 +23,11 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
             var md=-1;
             var mid=-1;
             var ch=-1;
+            var iovMatch = false;
+            if( cratesIndex.iov != model.iov) {
+                iovMatch = true;
+            }
+
             if(cratesIndex.crate!=null && cratesIndex.crate!='all') { cr=parseInt(cratesIndex.crate);}
             if(cratesIndex.rod!=null && cratesIndex.rod!='all') { rd=parseInt(cratesIndex.rod);}
             if(cratesIndex.mur!=null && cratesIndex.mur!='all') { mr=parseInt(cratesIndex.mur);}
@@ -30,16 +35,19 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
             if(cratesIndex.chip!=null && cratesIndex.chip!='all') { ch=parseInt(cratesIndex.chip);}
 
             console.log('CratesData: '+base);
-            promises.push(
-            crateAPI.getByURL(base + '/all').then(
-                function (res) {
-                    model.crateModel.data = res.data;
-                    model.crateModel.selectedURLElement = cr;
-                    console.log('CratesData: got crates : '+cr);
-                }));
+
+                promises.push(
+                    crateAPI.getByURL(base + '/all').then(
+                        function (res) {
+                            model.crateModel.data = res.data;
+                            model.crateModel.selectedURLElement = cr;
+                            console.log('CratesData: got crates : ' + cr);
+                        }));
             if( cr >= 0) {
                 base += '/' + cratesIndex.crate;
                 console.log('CratesData: ' + base);
+                // check to see if we already have this ROD
+
                 promises.push(crateAPI.getByURL(base + '/all').then(
                     function (res) {
                         model.rodModel.data = res.data;
