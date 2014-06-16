@@ -138,64 +138,45 @@ angular.module('snapshot-crates', [])
             // the model knows which column is used to index the row
             // and which column is used to generate the URL
             $scope.click = function(index, values, model) {
-                if( !$scope.loaded) {
+                if (!$scope.loaded) {
                     console.log("clicked before loading finished");
                     return;
                 }
 //                console.log('Model List is: '+JSON.stringify($scope.modelList));
-                console.log('click: '+index+' '+values[model.rowIndex]+' '+values[index]+' '+model.name);
+                console.log('click: ' + index + ' ' + values[model.rowIndex] + ' ' + values[index] + ' ' + model.name);
 // select or deselect now involve a URL change...
                 model.selectElement(values);
                 //var index = model.getIndex();
                 var url = $scope.model.getURL();
                 // this should cause a reload
                 $location.path(url);
+            }
 
-                // was it a select or a deselect
-                //if(model.selectElement(values)) {
-                  //  console.log('Select operation');
-                    // a select operation - lets grab some new data
-                    // if there is a child to give the data to...
-                    // just set up the index and go call the crateData api
-                    // in fact the selectElement should set up the index
+            $scope.dropdownClick = function() {
+                console.log("clicked!");
+            }
 
-                    // update the model with new data:
-
-                   // if( model.child) {
-                     //   var apiurl = $scope.model.getAPIURL($scope.iov);
-                     //   console.log(apiurl);
-                     //   CratesAPI.getByURL(apiurl).then(function (data) {
-                     //       model.child.resetModel(true);
-                     //       console.log(JSON.stringify(data));
-                     //       model.child.data = data.data;
-                     //       $scope.descriptor = $scope.model.descriptor();
-                      //      //$location.path = url;
-                     //   });
-                    //} else {
-                    //    $scope.descriptor = $scope.model.descriptor();
-                   // }
-                //} else {
-                //    console.log('Deselect operation');
-                  // was a deselect - nothing to do at the moment
-                //}
-
-            };
-
-            //var apiurl = $scope.buildAPIURL($scope.crateModel, $scope.iov);
-            //var url = $scope.buildURL($scope.crateModel, $scope.iov);
-            //var apiurl = $scope.model.getAPIURL($scope.iov);
-            $scope.data.getModelByIndex($scope.dataIndex).then(function(){
+            $scope.load = function(index) {
+                $scope.loaded = false;
+                $scope.data.getModelByIndex(index).then(function(){
                 $scope.descriptor=$scope.model.descriptor;
                 $scope.modelList = $scope.model.getList();
+                $scope.crateIndices=$scope.model.crateModel.getIndices();
+                $scope.rodIndices=$scope.model.rodModel.getIndices();
+                $scope.murIndices=$scope.model.murModel.getIndices();
+                $scope.modIndices=$scope.model.modModel.getIndices();
+                $scope.chipIndices=$scope.model.chipModel.getIndices();
+                // partial implementation for testing
+                $scope.crateSelection = $scope.model.crateModel.selectedURLElement>=0 ? $scope.model.crateModel.selectedURLElement : ""
+                    $scope.rodSelection = $scope.model.rodModel.selectedURLElement>=0 ? $scope.model.rodModel.selectedURLElement : ""
+                    $scope.murSelection = $scope.model.murModel.selectedURLElement>=0 ? $scope.model.murModel.selectedURLElement : ""
+                    $scope.modSelection = $scope.model.modModel.selectedURLElement>=0 ? $scope.model.modModel.selectedURLElement : ""
+                    $scope.chipSelection = $scope.model.chipModel.selectedURLElement>=0 ? $scope.model.chipModel.selectedURLElement : ""
+
                 $scope.loaded = true;
-            });
-/*
-            CratesAPI.getByURL(apiurl).then( function(data) {
-                $scope.model.crateModel.resetModel(true);
-                $scope.model.crateModel.data = data.data;
-                console.log('Grabbed data from: '+apiurl);
-                console.log('Setting CratesAPI data = '+JSON.stringify(data.data));
-                $scope.descriptor = $scope.model.descriptor();
-            });
-*/
+                });
+            }
+
+            $scope.load($scope.dataIndex);
+
         }]);

@@ -49,6 +49,19 @@ module.factory('CrateModel', function() {
                 this.child = obj;
             },
 
+            getIndices: function() {
+                var indices=[];
+                if(!this.data) {
+                    return indices;
+                }
+                var n = this.data.rows.length;
+                for( var i=0;i<n;++i) {
+                    var values = this.data.rows[i]["values"];
+                    indices.push(values[this.rowIndex])
+                }
+                return indices;
+            },
+
             deselect: function () {
                 this.selectedURLElement = -1;
                 if (this.child) {
