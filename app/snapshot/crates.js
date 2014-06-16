@@ -145,15 +145,17 @@ angular.module('snapshot-crates', [])
 //                console.log('Model List is: '+JSON.stringify($scope.modelList));
                 console.log('click: ' + index + ' ' + values[model.rowIndex] + ' ' + values[index] + ' ' + model.name);
 // select or deselect now involve a URL change...
-                model.selectElement(values);
+                model.selectElementFromList(values);
                 //var index = model.getIndex();
                 var url = $scope.model.getURL();
                 // this should cause a reload
                 $location.path(url);
             }
 
-            $scope.dropdownClick = function() {
-                console.log("clicked!");
+            $scope.dropdownClick = function(model,element) {
+                model.selectElement(element);
+                var url = $scope.model.getURL();
+                $location.path(url);
             }
 
             $scope.load = function(index) {

@@ -90,7 +90,11 @@ module.factory('CrateModel', function() {
                 return obj;
             },
 
-            selectElement: function(values) {
+            selectElementFromList: function(values) {
+                return this.selectElement(values[this.rowIndex]);
+            },
+
+            selectElement: function(element) {
                 // check for selection or deselection
                 // three possiblities:
                 //   i) click on same row - deselect row
@@ -103,16 +107,16 @@ module.factory('CrateModel', function() {
                 if( this.selectedURLElement>=0) {
                     // deselection
                     // clicked on selected row?
-                    if( this.selectedURLElement === values[this.rowIndex]) {
+                    if( this.selectedURLElement === element) {
                         this.deselect();
                         return false;
                     } else {
                         this.deselect();
-                        this.select(values[this.rowIndex]);
+                        this.select(element);
                         return true;
                     }
                 } else {
-                    this.select(values[this.rowIndex]);
+                    this.select(element);
                    return true;
                 }
             },
@@ -134,6 +138,7 @@ module.factory('CrateModel', function() {
                 mycopy.resetModel = this.resetModel;
                 mycopy.setChild = this.setChild;
                 mycopy.selectElement = this.selectElement;
+                mycopy.selectElement = this.selectElementFromList;
                 mycopy.descriptor = this.descriptor;
                 mycopy.processed = false;
                 mycopy.name = this.name;
