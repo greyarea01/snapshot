@@ -25,7 +25,7 @@ module.factory('CrateModel', function() {
             folders: [], // list of folders and IOV information
 
             showRow: function (values) {
-                console.log(this.selectedURLElement+' : '+values[this.rowIndex]);
+                //console.log(this.selectedURLElement+' : '+values[this.rowIndex]);
                 if (this.selectedURLElement >= 0) { // only works for positive definite URL indices
                     return (values[this.rowIndex] === this.selectedURLElement);
                 }
@@ -50,7 +50,7 @@ module.factory('CrateModel', function() {
             },
 
             getIndices: function() {
-                var indices=[];
+                var indices=['all'];
                 if(!this.data) {
                     return indices;
                 }
@@ -88,6 +88,12 @@ module.factory('CrateModel', function() {
                     this.child.descriptor(obj);
                 }
                 return obj;
+            },
+
+            setData: function(data,element) {
+                this.data = data;
+                this.selectedURLElement = element;
+                this.indices = this.getIndices();
             },
 
             selectElementFromList: function(values) {
@@ -133,15 +139,20 @@ module.factory('CrateModel', function() {
                 mycopy.showRow = this.showRow;
                 mycopy.select = this.select;
                 mycopy.deselect = this.deselect;
+                mycopy.name = this.name;
 
                 mycopy.copy = this.copy;
                 mycopy.resetModel = this.resetModel;
                 mycopy.setChild = this.setChild;
+                mycopy.setData = this.setData;
+                mycopy.getIndices = this.getIndices;
                 mycopy.selectElement = this.selectElement;
                 mycopy.selectElement = this.selectElementFromList;
                 mycopy.descriptor = this.descriptor;
                 mycopy.processed = false;
                 mycopy.name = this.name;
+                mycopy.indices = mycopy.getIndices();
+
                 this.processed = true;
                 if (this.child) {
                     mycopy.child = this.child.copy();
@@ -175,36 +186,14 @@ module.factory('CrateModel', function() {
 //   fullModel.modModel.rowIndex= 1; // to use moduleID
     fullModel.chipModel.rowIndex = 0;
     fullModel.iov = 'now';
-
-    fullModel.getList = function () {
-        return [
-            this.crateModel,
-            this.rodModel,
-            this.murModel,
-            this.modModel,
-            this.chipModel
+    fullModel.modelList =  [
+            fullModel.crateModel,
+            fullModel.rodModel,
+            fullModel.murModel,
+            fullModel.modModel,
+            fullModel.chipModel
         ];
-    };
-// this will go away in the later version... all we need is the index
-    fullModel.getAPIURL = function () {
-        var url = 'api/crates/' + this.iov + '/';
-        var model = this.crateModel;
-        var finished = false;
-        while (!finished) {
-            if (model.selectedURLElement >= 0) {
-                url += model.selectedURLElement + '/';
-                model = model.child;
-                if (model === null) {
-                    finished = true;
-                }
-            } else {
-                url += 'all';
-                finished = true;
-            }
 
-        }
-        return url;
-    };
 
     // get the index as a list of values
     fullModel.getIndexList = function() {
@@ -255,7 +244,7 @@ module.factory('CrateModel', function() {
             return index;
         }
 
-        index.mur = this.murmodel.selectedURLElement;
+        index.mur = this.murModel.selectedURLElement;
         if( this.modModel.selectedURLElement < 0) {
             index.mod = 'all';
             return index;

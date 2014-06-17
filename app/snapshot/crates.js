@@ -56,10 +56,11 @@ angular.module('snapshot-crates', [])
                     var url = '/crates/' + this.iov;
 
                     // special case for crate since it is the first index - if this is null or all, add all to the URL
-                    if( this.crate===null || this.cate==='all') {
+                    if( this.crate===null || this.crate==='all') {
                         url+='/all';
                         return url;
                     }
+                    url+='/'+this.crate;
 
                     if( this.rod===null) {
                         return url;
@@ -100,7 +101,7 @@ angular.module('snapshot-crates', [])
                         this.crate = 'all';
                     } else {
                         this.iov = params.iov;
-                        this.dataIndex.iov = params.iov;
+                        this.iov = params.iov;
                     }
                     var finished = false
                     var i = 0;
@@ -126,6 +127,8 @@ angular.module('snapshot-crates', [])
             // loaded is a flag to stop the click handlers and other navigational tools from working
             // until the model has been loaded
             $scope.loaded=false;
+
+            $scope.dataIndex.setFromURLParams($routeParams);
 
             // for saving snapshots
             $scope.dataStores=CratesDataStore;
@@ -185,55 +188,63 @@ angular.module('snapshot-crates', [])
             // model = model providing the data for the table that was clicked
             // the model knows which column is used to index the row
             // and which column is used to generate the URL
-            $scope.click = function(index, values, model) {
-                if (!$scope.loaded) {
-                    console.log("clicked before loading finished");
-                    return;
+            $scope.clickV2 = function(property, el) {
+                var element=el;
+                // update the index. this will trigger a reload to update the model
+                // make sure it is an integer and not a string
+                if( el != null && el != 'all') {
+                    element = parseInt(el);
+                } else {
+                    element = el;
                 }
+                console.log('Changing the data index: '+property+' '+element);
+                console.log($scope.dataIndex[property]);
 
-                // this needs to be changed to reflect the new approach using a  watch on the index
-//                console.log('Model List is: '+JSON.stringify($scope.modelList));
-                console.log('click: ' + index + ' ' + values[model.rowIndex] + ' ' + values[index] + ' ' + model.name);
-// select or deselect now involve a URL change...
-                model.selectElementFromList(values);
-                //var index = model.getIndex();
-                var url = $scope.model.getURL();
-                // this should cause a reload
-                $location.path(url);
+                var oldElement = $scope.dataIndex[property];
+                if( oldElement == element) {
+                    // this is a deselect operation
+                    element='all';
+                }
+                $scope.dataIndex[property]=element; // check this...
+                console.log($scope.dataIndex[property]);
+
             }
 
-            $scope.dropdownClick = function(model,element) {
-                model.selectElement(element);
-                var url = $scope.model.getURL();
+
+            $scope.update = function() {
+                console.log('Updating');
+                var url = $scope.dataIndex.getURL();
+                console.log(url);
                 $location.path(url);
             }
 
             $scope.load = function(index) {
                 $scope.loaded = false;
                 $scope.data.getModelByIndex(index).then(function(){
-                    $scope.descriptor=$scope.model.descriptor;
-                    $scope.modelList = $scope.model.getList();
-                    $scope.crateIndices=$scope.model.crateModel.getIndices();
-                    $scope.rodIndices=$scope.model.rodModel.getIndices();
-                    $scope.murIndices=$scope.model.murModel.getIndices();
-                    $scope.modIndices=$scope.model.modModel.getIndices();
-                    $scope.chipIndices=$scope.model.chipModel.getIndices();
+  //                  $scope.descriptor=$scope.model.descriptor();
+  //                  $scope.crateIndices=$scope.model.crateModel.getIndices();
+   //                 $scope.rodIndices=$scope.model.rodModel.getIndices();
+     //               $scope.murIndices=$scope.model.murModel.getIndices();
+       //             $scope.modIndices=$scope.model.modModel.getIndices();
+         //           $scope.chipIndices=$scope.model.chipModel.getIndices();
                     // partial implementation for testing
-                    $scope.crateSelection = $scope.model.crateModel.selectedURLElement>=0 ? $scope.model.crateModel.selectedURLElement : ""
-                    $scope.rodSelection = $scope.model.rodModel.selectedURLElement>=0 ? $scope.model.rodModel.selectedURLElement : ""
-                    $scope.murSelection = $scope.model.murModel.selectedURLElement>=0 ? $scope.model.murModel.selectedURLElement : ""
-                    $scope.modSelection = $scope.model.modModel.selectedURLElement>=0 ? $scope.model.modModel.selectedURLElement : ""
-                    $scope.chipSelection = $scope.model.chipModel.selectedURLElement>=0 ? $scope.model.chipModel.selectedURLElement : ""
+//                    $scope.crateSelection = $scope.model.crateModel.selectedURLElement>=0 ? $scope.model.crateModel.selectedURLElement : ""
+ //                   $scope.rodSelection = $scope.model.rodModel.selectedURLElement>=0 ? $scope.model.rodModel.selectedURLElement : ""
+ //                   $scope.murSelection = $scope.model.murModel.selectedURLElement>=0 ? $scope.model.murModel.selectedURLElement : ""
+   //                 $scope.modSelection = $scope.model.modModel.selectedURLElement>=0 ? $scope.model.modModel.selectedURLElement : ""
+     //               $scope.chipSelection = $scope.model.chipModel.selectedURLElement>=0 ? $scope.model.chipModel.selectedURLElement : ""
+//
+                    console.log('Watching the dataIndex');
+                    $scope.$watch("dataIndex.crate",$scope.update);
+                    $scope.$watch("dataIndex.rod",$scope.update);
+                    $scope.$watch("dataIndex.mur",$scope.update);
+                    $scope.$watch("dataIndex.mod",$scope.update);
+                    $scope.$watch("dataIndex.chip",$scope.update);
 
                     $scope.loaded = true;
                 });
             }
 
             $scope.load($scope.dataIndex);
-
-            $scope.$watch($scope.dataIndex, function() {
-                var url = $scope.dataIndex.getURL();
-                $location.path(url);
-            })
 
         }]);

@@ -24,12 +24,23 @@
     <div class="panel panel-default">
         <div class="panel-body">
 
+            <div class="btn-group" ng-repeat="md in model.modelList" dropdown>
+                <button type="button" class="btn btn-default dropdown-toggle" ng-show="md.data">
+                    {{md.name}} : {{md.selectedURLElement}} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu list-group" role="menu" ng-show="md.indices.length>0">
+                    <li class="list-group-item" ng-repeat="element in md.indices" ng-click="clickV2(md.name,element)"> {{element}}</li>
+                </ul>
+            </div>
+
+            <!--
+
             <div class="btn-group" dropdown>
                 <button type="button" class="btn btn-default dropdown-toggle" ng-show="model.crateModel.data">
                     Crate: {{crateSelection}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu list-group" role="menu" ng-show="crateIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in crateIndices" ng-click="dropdownClick(model.crateModel,element)">{{element}}</li>
+                    <li class="list-group-item"  ng-repeat="element in crateIndices" ng-click="clickV2(model.crateModel.name,element)">{{element}}</li>
                 </ul>
             </div>
 
@@ -38,7 +49,7 @@
                     ROD: {{rodSelection}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu list-group" role="menu" ng-show="rodIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in rodIndices" ng-click="dropdownClick(model.rodModel,element)">{{element}}</li>
+                    <li class="list-group-item"  ng-repeat="element in rodIndices" ng-click="clickV2(model.rodModel.name,element)">{{element}}</li>
                 </ul>
             </div>
 
@@ -47,7 +58,7 @@
                     MUR: {{murSelection}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu list-group" role="menu" ng-show="murIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in murIndices" ng-click="dropdownClick(model.murModel,element)">{{element}}</li>
+                    <li class="list-group-item"  ng-repeat="element in murIndices" ng-click="clickV2(model.murModel.name,element)">{{element}}</li>
                 </ul>
             </div>
 
@@ -56,7 +67,7 @@
                     Module: {{modSelection}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu list-group" role="menu" ng-show="modIndices.length>0">
-                    <li class="list-group-item "  ng-repeat="element in modIndices" ng-click="dropdownClick(model.modModel,element)">{{element}}</li>
+                    <li class="list-group-item "  ng-repeat="element in modIndices" ng-click="clickV2(model.modModel.name,element)">{{element}}</li>
                 </ul>
             </div>
 
@@ -65,14 +76,16 @@
                     Chip: {{chipSelection}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu list-group" role="menu" ng-show="chipIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in chipIndices" ng-click="dropdownClick(model.chipModel,element)">{{element}}</li>
+                    <li class="list-group-item"  ng-repeat="element in chipIndices" ng-click="clickV2(model.chipModel.name,element)">{{element}}</li>
                 </ul>
             </div>
+            -->
+
         </div>
     </div>
 
     <div class="container">
-        <div class="panel panel-default row" ng-repeat="md in modelList" ng-show="md.data">
+        <div class="panel panel-default row" ng-repeat="md in model.modelList" ng-show="md.data">
             <div class="panel-body table-scrollable">
 
                 <table  class="table table-responsive">
@@ -82,8 +95,8 @@
                         <th  ng-repeat="header in md.data.headers" class="col-lg-2">{{header}}</th>
                     </tr>
                     </thead>
-                    <tr ng-repeat="row in md.data.rows" ng-show="md.showRow(row.values)">
-                        <td  ng-repeat="value in row.values" ng-click="click($index,row.values,md)" class="col-lg-2">{{value}}</td>
+                    <tr ng-repeat="row in md.data.rows" ng-show="md.showRow(row.values)" ng-click="clickV2(md.name,row.values[md.rowIndex])">
+                        <td  ng-repeat="value in row.values" class="col-lg-2">{{value}}</td>
                     </tr>
 
                     </tbody>
