@@ -3,7 +3,8 @@
         <div class="container">
             <div class="panel panel-default">
                 <div class="panel-body">
-            <button type="button" class="btn btn-default btn-warning" ng-repeat="obj in dataStores">{{obj.label}}</button>
+            <button type="button" ng-class="['btn', 'btn-default', buttonClass[$index]]" ng-repeat="obj in dataStores" ng-click="toggleVisible($index,obj.label)">{{obj.label}}</button>
+            <button type="button" class="btn btn-default pull-right" ng-click="toggleDiffs()"> Test</space></button>
         </div>
             </div>
         </div>
@@ -12,14 +13,14 @@
         <table class="table table-hover table-condensed">
             <thead>
             <tr>
-                <th ng-repeat="header in diffModel.headers">{{header}}</th>
+                <th ng-repeat="header in diffModel.headers" ng-show="columnVisible($index-1)">{{header.label}}</th>
             </tr>
             </thead>
             <tbody>
 
-            <tr ng-repeat="row in diffModel.rows">
+            <tr ng-repeat="row in diffModel.rows " ng-class="highlightRow(row.values)" ng-show="showRow(row.values)">
                 <th>{{row.name}}</th>
-                <td ng-repeat="value in row.values">{{value}}</td>
+                <td  ng-repeat="v in row.values" ng-show="columnVisible($index)">{{v.value}}</td>
             </tr>
             </tbody>
         </table>

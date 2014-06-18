@@ -151,6 +151,7 @@ module.factory('CrateModel', function() {
                 mycopy.descriptor = this.descriptor;
                 mycopy.processed = false;
                 mycopy.name = this.name;
+                mycopy.rowIndex = this.rowIndex;
                 mycopy.indices = mycopy.getIndices();
 
                 this.processed = true;
