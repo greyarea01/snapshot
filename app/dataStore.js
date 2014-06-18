@@ -4,7 +4,7 @@
 
 var module = angular.module('snapshot');
 
-module.factory('CratesDataStore', function() {
+module.factory('CratesDataStore',['$localStorage', function($localStorage) {
     var dataStore = [];
     return dataStore;
-});
+}]);

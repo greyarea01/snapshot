@@ -6,7 +6,8 @@ angular.module('snapshot', [
     'ui.bootstrap',
     'snapshot-crates',
     'snapshot-diff',
-    'snapshot-datastore']).
+    'snapshot-datastore',
+    'ngstorage']).
     config(['$routeProvider', '$locationProvider',
         function($routeProvider,$locationProvider) {
             $routeProvider.
