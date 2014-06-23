@@ -162,6 +162,8 @@ angular.module('snapshot-crates', [])
                     iov: $scope.iov,
                     model: $scope.model.crateModel.copy()
                 };
+                var str='';
+                obj.model.description = $scope.model.descriptor(str);
                 console.log('Snapshot stored:' + ($scope.model.descriptor()).str);
                 $scope.dataStores.push(obj);
             };

@@ -5,6 +5,9 @@
 var module = angular.module('snapshot');
 
 module.factory('CratesDataStore',['$localStorage', function($localStorage) {
-    var dataStore = [];
-    return dataStore;
+    var dataStore = $localStorage;
+    if( typeof dataStore.data === 'undefined') {
+        dataStore.data=[];
+    }
+    return dataStore.data;
 }]);

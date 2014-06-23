@@ -22,7 +22,7 @@ angular.module('snapshot-datastore',[])
             var obj = {
                 label: data.label,
                 iov: data.iov,
-                descriptor: data.model.descriptor({str:''})
+                descriptor: data.model.description
             }
             $scope.dataList.push(obj);
         }
