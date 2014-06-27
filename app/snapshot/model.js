@@ -24,6 +24,16 @@ module.factory('CrateModel', function() {
             processed: false, // flag used to avoid recursion in reset method
             folders: [], // list of folders and IOV information
 
+            selectedURLElementString : function() {
+                console.log('making element string');
+                if( this.selectedURLElement=null) {
+                    return '';
+                } else if(this.selectedURLElement<0) {
+                    return 'all';
+                } else {
+                    return this.selectedURLElement;
+                }
+            },
             showRow: function (values) {
                 //console.log(this.selectedURLElement+' : '+values[this.rowIndex]);
                 if (this.selectedURLElement >= 0) { // only works for positive definite URL indices
@@ -149,6 +159,7 @@ module.factory('CrateModel', function() {
                 mycopy.selectElement = this.selectElement;
                 mycopy.selectElement = this.selectElementFromList;
                 mycopy.descriptor = this.descriptor;
+                mycopy.selectedURLElementString = this.selectedURLElementString;
                 mycopy.processed = false;
                 mycopy.name = this.name;
                 mycopy.rowIndex = this.rowIndex;

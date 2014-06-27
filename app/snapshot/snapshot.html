@@ -1,8 +1,6 @@
 <div class="container">
 
-    <div class="container" ng-show="!loaded">
-        <h1 class="text-danger"> Loading! </h1>
-    </div>
+
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -14,7 +12,7 @@
                     <button type="button" class="btn btn-default btn-warning btn-group text-center" ng-repeat="obj in dataStores">{{obj.label}}</button>
                 </div>
                 <div class="col-sm-2">
-                    <button type="button" class="btn btn-default right" ng-show="dataStores.length>0" ng-click="viewStore()">View</button>
+                    <button type="button" class="btn btn-default right" ng-show="dataStores.length>0" ng-click="viewStore()">View/Edit</button>
                     <button type="button" class="btn btn-default btn-default right" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
                 </div>
             </div>
@@ -33,62 +31,15 @@
                 </ul>
             </div>
 
-            <!--
-
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" ng-show="model.crateModel.data">
-                    Crate: {{crateSelection}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu list-group" role="menu" ng-show="crateIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in crateIndices" ng-click="clickV2(model.crateModel.name,element)">{{element}}</li>
-                </ul>
-            </div>
-
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" ng-show="model.rodModel.data">
-                    ROD: {{rodSelection}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu list-group" role="menu" ng-show="rodIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in rodIndices" ng-click="clickV2(model.rodModel.name,element)">{{element}}</li>
-                </ul>
-            </div>
-
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" ng-show="model.murModel.data">
-                    MUR: {{murSelection}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu list-group" role="menu" ng-show="murIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in murIndices" ng-click="clickV2(model.murModel.name,element)">{{element}}</li>
-                </ul>
-            </div>
-
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" ng-show="model.modModel.data">
-                    Module: {{modSelection}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu list-group" role="menu" ng-show="modIndices.length>0">
-                    <li class="list-group-item "  ng-repeat="element in modIndices" ng-click="clickV2(model.modModel.name,element)">{{element}}</li>
-                </ul>
-            </div>
-
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" ng-show="model.chipModel.data">
-                    Chip: {{chipSelection}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu list-group" role="menu" ng-show="chipIndices.length>0">
-                    <li class="list-group-item"  ng-repeat="element in chipIndices" ng-click="clickV2(model.chipModel.name,element)">{{element}}</li>
-                </ul>
-            </div>
-            -->
 
         </div>
     </div>
 
     <div class="container">
-        <div class="panel panel-default row" ng-repeat="md in model.modelList" ng-show="md.data">
-            <div class="panel-body table-scrollable">
+        <div class="panel panel-default row">
+            <div class="panel-body table-scrollable" >
 
-                <table  class="table table-responsive">
+                <table  class="table table-responsive" ng-repeat="md in model.modelList" ng-show="md.data">
 
                     <thead>
                     <tr>
@@ -106,6 +57,8 @@
         </div>
 
     </div>
-
+    <div class="container" ng-show="!loaded">
+        <h1 class="text-danger"> Loading! </h1>
+    </div>
 
 </div>

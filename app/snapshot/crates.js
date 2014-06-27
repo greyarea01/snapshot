@@ -119,7 +119,36 @@ angular.module('snapshot-crates', [])
                             finished = true;
                         }
                     }
-                }
+                },
+                modifyProperty: function(property,value) {
+                    if( property=='iov') {
+                        if( value != this.iov) {
+                            this.iov = value;
+                            this.crate = all;
+                            this.rod = null;
+                            this.mur = null;
+                            this.mod = null;
+                            this.chip = null;
+                        }
+                        return;
+                    }
+                    var propertyList = ['crate','rod','mur','mod','chip'];
+                    var n = propertyList.length;
+                    var makeRestNull=false;
+                    for(var i = 0;i<n;++i) {
+                        if( makeRestNull) {
+                            this[propertyList[i]]=null;
+                        } else {
+                            if (property == propertyList[i]) {
+                                if (value != this[property]) {
+                                    this[property]=value;
+                                    makeRestNull=true;
+                                }
+                            }
+                        }
+                    }
+
+            }
 
 
             };
@@ -207,7 +236,8 @@ angular.module('snapshot-crates', [])
                     // this is a deselect operation
                     element='all';
                 }
-                $scope.dataIndex[property]=element; // check this...
+    //                $scope.dataIndex[property]=element; // check this...
+                $scope.dataIndex.modifyProperty(property,element);
                 console.log($scope.dataIndex[property]);
 
             }
