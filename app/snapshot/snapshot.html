@@ -39,15 +39,15 @@
         <div class="panel panel-default row">
             <div class="panel-body table-scrollable" >
 
-                <table  class="table table-responsive" ng-repeat="md in model.modelList" ng-show="md.data">
+                <table  class="table table-responsive"  ng-repeat="md in model.modelList" ng-show="md.data">
 
                     <thead>
                     <tr>
-                        <th  ng-repeat="header in md.data.headers" class="col-lg-2">{{header}}</th>
+                        <th  ng-repeat="header in md.data.headers" class="col-sm-3">{{header}}</th>
                     </tr>
                     </thead>
                     <tr ng-repeat="row in md.data.rows" ng-show="md.showRow(row.values)" ng-click="clickV2(md.name,row.values[md.rowIndex])">
-                        <td  ng-repeat="value in row.values" class="col-lg-2">{{value}}</td>
+                        <td  ng-repeat="value in row.values" class="col-sm-3">{{value}}</td>
                     </tr>
 
                     </tbody>
