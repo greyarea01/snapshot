@@ -44,6 +44,12 @@ angular.module('snapshot-crates', [])
             // set index to initial values
             // define the index object - its a simple object that can be initialized with the $routeParams
             // or return its contents as a URL
+            $scope.getIOVNow = function() {
+                // getTime returns miliseconds - convert to nanoseconds
+                var nanoSeconds = parseInt((new Date).getTime()*1e6);
+                return nanoSeconds;
+            };
+
             $scope.dataIndex= {
                 iov: null,
                 crate: null,
@@ -97,11 +103,15 @@ angular.module('snapshot-crates', [])
                     var n = propertyList.length;
 
                     if (!params.iov) {
-                        this.iov = 'now';
+//                        this.iov = 'now';
+                        this.iov = $scope.getIOVNow();
                         this.crate = 'all';
                     } else {
-                        this.iov = params.iov;
-                        this.iov = params.iov;
+                        if( params.iov==='now') {
+                            this.iov = $scope.getIOVNow();
+                        } else {
+                            this.iov = parseInt(params.iov);
+                        }
                     }
                     var finished = false
                     var i = 0;

@@ -5,33 +5,33 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="col-sm-2">
-                    <button type="button" class="btn b
-            tn-default left" ng-click="storeSnapshot(0)"> Store {{dataStores.length}}</button>
+                    <button type="button" class="btn btn-default left" ng-click="storeSnapshot(0)"> Store {{dataStores.length}}</button>
                 </div>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                     <button type="button" class="btn btn-default btn-warning btn-group text-center" ng-repeat="obj in dataStores">{{obj.label}}</button>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <button type="button" class="btn btn-default right" ng-show="dataStores.length>0" ng-click="viewStore()">View/Edit</button>
                     <button type="button" class="btn btn-default btn-default right" ng-show="dataStores.length>1" ng-click="diff()" >Compare</button>
                 </div>
             </div>
         </div>
     </div>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
 
-    <div class="panel panel-default">
-        <div class="panel-body">
+                <div class="btn-group" ng-repeat="md in model.modelList" dropdown>
+                    <button type="button" class="btn btn-default dropdown-toggle" ng-show="md.data">
+                        {{md.name}} : {{md.selectedURLElement}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu list-group" role="menu" ng-show="md.indices.length>0">
+                        <li class="list-group-item" ng-repeat="element in md.indices" ng-click="clickV2(md.name,element)"> {{element}}</li>
+                    </ul>
+                </div>
 
-            <div class="btn-group" ng-repeat="md in model.modelList" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" ng-show="md.data">
-                    {{md.name}} : {{md.selectedURLElement}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu list-group" role="menu" ng-show="md.indices.length>0">
-                    <li class="list-group-item" ng-repeat="element in md.indices" ng-click="clickV2(md.name,element)"> {{element}}</li>
-                </ul>
+
             </div>
-
-
         </div>
     </div>
 

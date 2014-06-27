@@ -1,15 +1,29 @@
 
 <div class="container">
-    {{dataList.length}}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-7">
+                    <button type="button" class="btn btn-default btn-warning btn-group text-center" ng-repeat="obj in dataStore">{{obj.label}}</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-default btn-default right" ng-show="dataStore.length>1" ng-click="diff()" >Compare</button>
+                </div>
+            </div>
+        </div>
+    </div>
    <table class="table">
        <thead>
        <th> Label</th> <th>IOV</th> <th>Descriptor</th>
        </thead>
 <tbody>
     <tr ng-repeat="data in dataList">
-        <td> {{data.label}}</td>
-        <td> {{data.iov}}</td>
-        <td> {{data.descriptor}}</td>
+        <td > {{data.label}}</td>
+        <td > {{data.iov}}</td>
+        <td > {{data.descriptor}}</td>
+        <td class="btn btn-danger btn-sm" ng-click="deleteEntry($index)"> Remove </td>
     </tr>
 </tbody>
     </table>

@@ -10,7 +10,7 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-body col-md-12 table-scrollable">
-        <table class="table table-hover table-condensed">
+        <table class="table table-hover table-condensed" style="table-layout: fixed">
             <thead>
             <tr>
                 <th ng-repeat="header in diffModel.headers" ng-show="columnVisible($index-1)">{{header.label}}</th>
@@ -20,7 +20,7 @@
 
             <tr ng-repeat="row in diffModel.rows " ng-class="highlightRow(row.values)" ng-show="showRow(row.values)">
                 <th>{{row.name}}</th>
-                <td  ng-repeat="v in row.values" ng-show="columnVisible($index)">{{v.value}}</td>
+                <td  class="col-sm-2 cell-fixed" ng-repeat="v in row.values" ng-show="columnVisible($index)">{{v.value}}</td>
             </tr>
             </tbody>
         </table>
