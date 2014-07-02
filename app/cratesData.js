@@ -26,7 +26,9 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
 
             var forceReload = false;
             if( cratesIndex.iov != model.iov) {
+                console.log('IOV='+cratesIndex.iov+' '+model.iov);
                 forceReload = true;
+                model.iov = cratesIndex.iov;
             }
 
             if(cratesIndex.crate!=null && cratesIndex.crate!='all') { cr=parseInt(cratesIndex.crate);}
@@ -36,8 +38,8 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
             if(cratesIndex.chip!=null && cratesIndex.chip!='all') { ch=parseInt(cratesIndex.chip);}
 
             console.log('CratesData: '+base);
-
-            if(forceReload || cr != currentModelIndex.crate) {
+            console.log('-=-=-= : '+cr+' '+currentModelIndex.crate)
+            if(forceReload || cr != parseInt(currentModelIndex.crate)) {
                 forceReload = true;
                 model.crateModel.resetModel(true);
                 promises.push(
