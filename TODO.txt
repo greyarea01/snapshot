@@ -3,18 +3,18 @@ Things to consider doing next:
 1. Remove $http from the controller and add a service to provide the data
      - will remove dependency of the crate controller on $http DONE
 2. Increase complexity of getting data so we can grab multiple tables.... TO DO
-3. Improve routing so we can use full URLs crates/iov/crate/rod/mur/mod/... etc IN PROGRESS
+3. Improve routing so we can use full URLs crates/iov/crate/rod/mur/mod/... etc DONE
    3a. set up routes DONE
-   3b. translate routeParams into an index object
-   3c. modify dataStore to get a model based on the index object
-   3d. modify dataStore to do http requests to fill model if a new index is requested
+   3b. translate routeParams into an index object DONE
+   3c. modify dataStore to get a model based on the index object DONE
+   3d. modify dataStore to do http requests to fill model if a new index is requested DONE
    3e. ...
 
 
-4. Add persistency for dataStore - localStorage? IndexedDB?
-5. Improve diff functionality
+4. Add persistency for dataStore - localStorage? IndexedDB? DONE
+5. Improve diff functionality DONE
 6. Additional navigation tools:
-     - some kind of crate/slot/mur/mod/chip selector in the page
+     - some kind of crate/slot/mur/mod/chip selector in the page DONE
 
 7. IOV navigate?
 8. Run navigation
