@@ -40,14 +40,18 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
             console.log('CratesData: '+base);
             console.log('-=-=-= : '+cr+' '+currentModelIndex.crate)
             if(forceReload || cr != parseInt(currentModelIndex.crate)) {
-                forceReload = true;
-                model.crateModel.resetModel(true);
-                promises.push(
-                    crateAPI.getByURL(base + '/all').then(
-                        function (res) {
-                            model.crateModel.setData(res.data, cr);
-                            console.log('CratesData: got crates : ' + cr);
-                        }));
+                forceReload = true; // force the other bits of the model to reload
+                if( currentModelIndex.crate==='all') {
+                    model.rodModel.resetModel(true);
+                    console.log('Dont need to reload crate data but do need to force reload of the rest');
+                } else {
+                    promises.push(
+                        crateAPI.getByURL(base + '/all').then(
+                            function (res) {
+                                model.crateModel.setData(res.data, cr);
+                                console.log('CratesData: got crates : ' + cr);
+                            }));
+                }
             } else {
                 console.log("Don't need to reload crate");
             }
@@ -58,12 +62,16 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                 // check to see if we already have this ROD
                 if (forceReload || rd != currentModelIndex.rod) {
                     forceReload=true;
-                    model.rodModel.resetModel(true);
-                    promises.push(crateAPI.getByURL(base + '/all').then(
-                        function (res) {
-                            model.rodModel.setData(res.data, rd);
-                            console.log('CratesData: got crates : ' + cr + ' ' + rd);
-                        }));
+                    if( currentModelIndex.rod==='all') {
+                        model.murModel.resetModel(true);
+                    } else {
+                        model.rodModel.resetModel(true);
+                        promises.push(crateAPI.getByURL(base + '/all').then(
+                            function (res) {
+                                model.rodModel.setData(res.data, rd);
+                                console.log('CratesData: got crates : ' + cr + ' ' + rd);
+                            }));
+                    }
                 } else {
                     console.log("Don't need to reload rod");
                 }
@@ -74,19 +82,24 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                     if( forceReload || mr != currentModelIndex.mur)
                     {
                         forceReload=true;
-                        model.murModel.resetModel(true);
-                        promises.push(crateAPI.getByURL(base + '/all').then(
-                            function (res) {
-                                model.murModel.setData(res.data, mr);
-                                console.log('CratesData: got crates : ' + cr + ' ' + rd + ' ' + mr);
-                                console.log('CratesData: *** ' + JSON.stringify(res.data));
-                            }));
+                        if( currentModelIndex.mur==='all') {
+                            model.modModel.resetModel(true);
+                        } else {
+                            model.murModel.resetModel(true);
+                            promises.push(crateAPI.getByURL(base + '/all').then(
+                                function (res) {
+                                    model.murModel.setData(res.data, mr);
+                                    console.log('CratesData: got crates : ' + cr + ' ' + rd + ' ' + mr);
+                                    console.log('CratesData: *** ' + JSON.stringify(res.data));
+                                }));
+                        }
                     } else {
                         console.log("Don't need to reload MUR");
                     }
                     if(mr>=0) {
                         base += '/' + cratesIndex.mur;
                         console.log('CratesData: ' + base);
+                        // does this need the same treatment for optimising reloading?
                         if( forceReload || md != currentModelIndex.mod) {
                             model.modModel.resetModel(true);
                             promises.push(crateAPI.getByURL(base + '/all').then(

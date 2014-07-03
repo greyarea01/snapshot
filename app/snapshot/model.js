@@ -231,7 +231,7 @@ module.factory('CrateModel', function() {
     fullModel.getIndex = function() {
         var index = {
             iov: this.iov,
-            crate: 'all',
+            crate: null,
             rod: null,
             mur: null,
             mod: null,

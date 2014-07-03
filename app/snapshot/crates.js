@@ -263,19 +263,7 @@ angular.module('snapshot-crates', [])
             $scope.load = function(index) {
                 $scope.loaded = false;
                 $scope.data.getModelByIndex(index).then(function(){
-  //                  $scope.descriptor=$scope.model.descriptor();
-  //                  $scope.crateIndices=$scope.model.crateModel.getIndices();
-   //                 $scope.rodIndices=$scope.model.rodModel.getIndices();
-     //               $scope.murIndices=$scope.model.murModel.getIndices();
-       //             $scope.modIndices=$scope.model.modModel.getIndices();
-         //           $scope.chipIndices=$scope.model.chipModel.getIndices();
-                    // partial implementation for testing
-//                    $scope.crateSelection = $scope.model.crateModel.selectedURLElement>=0 ? $scope.model.crateModel.selectedURLElement : ""
- //                   $scope.rodSelection = $scope.model.rodModel.selectedURLElement>=0 ? $scope.model.rodModel.selectedURLElement : ""
- //                   $scope.murSelection = $scope.model.murModel.selectedURLElement>=0 ? $scope.model.murModel.selectedURLElement : ""
-   //                 $scope.modSelection = $scope.model.modModel.selectedURLElement>=0 ? $scope.model.modModel.selectedURLElement : ""
-     //               $scope.chipSelection = $scope.model.chipModel.selectedURLElement>=0 ? $scope.model.chipModel.selectedURLElement : ""
-//
+
                     console.log('Watching the dataIndex');
                     $scope.$watch("dataIndex.crate",$scope.update);
                     $scope.$watch("dataIndex.rod",$scope.update);
