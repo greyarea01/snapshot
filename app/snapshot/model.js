@@ -18,25 +18,24 @@ module.factory('CrateModel', function() {
 
         myModel = {
             child: null, // child object
-            selectedURLElement: -1, // index of selected element as it appears in the URL
-            rowIndex: -1,
+            selectedURLElement: null, // index of selected element as it appears in the URL
+                // this is either null, or an index value
+            rowIndex: -1, // column in the row to use as the index
             data: null, // data
             processed: false, // flag used to avoid recursion in reset method
             folders: [], // list of folders and IOV information
 
             selectedURLElementString : function() {
                 console.log('making element string');
-                if( this.selectedURLElement=null) {
+                if( this.selectedURLElement===null) {
                     return '';
-                } else if(this.selectedURLElement<0) {
-                    return 'all';
                 } else {
                     return this.selectedURLElement;
                 }
             },
             showRow: function (values) {
-                //console.log(this.selectedURLElement+' : '+values[this.rowIndex]);
-                if (this.selectedURLElement >= 0) { // only works for positive definite URL indices
+                // if an element has been selected only show the row than matches the selection
+                if (this.selectedURLElement!=null && this.selectedURLElement!='all') {
                     return (values[this.rowIndex] === this.selectedURLElement);
                 }
                 return true;
@@ -44,9 +43,7 @@ module.factory('CrateModel', function() {
 
             resetModel: function (recurse) {
                 this.data = null;
-                //this.selectedRow = -1;
-                this.selectedURLElement = -1;
-                //this.selectedURLIndex = -1;
+                this.selectedURLElement = null;
                 this.processed = true; // protection against infinite recursion
                 if (recurse && this.child != null && !this.child.processed) {
                     this.child.resetModel(true);
@@ -72,12 +69,13 @@ module.factory('CrateModel', function() {
                 return indices;
             },
 
-            deselect: function () {
-                this.selectedURLElement = -1;
-                if (this.child) {
+            deselect: function (resetChildren) {
+                this.selectedURLElement = 'all';
+                if (resetChildren && this.child) {
                     this.child.resetModel(true);
                 }
             },
+
             select: function(element) {
                 this.selectedURLElement = element;
             },
@@ -87,12 +85,12 @@ module.factory('CrateModel', function() {
                     return obj;
                 }
                 obj.str+=' '+this.name+': ';
-                if( this.selectedURLElement >=0) {
+                if( this.selectedURLElement!=null) {
                     obj[this.name] = this.selectedURLElement;
                     obj.str+=this.selectedURLElement;
                 }  else {
-                    obj[this.name] = 'all';
-                    obj.str+='all';
+                    obj[this.name] = '---';
+                    obj.str+='---';
                 }
                 if( this.child) {
                     this.child.descriptor(obj);
@@ -101,6 +99,7 @@ module.factory('CrateModel', function() {
             },
 
             setData: function(data,element) {
+                console.log('setData: '+element);
                 this.data = data;
                 this.selectedURLElement = element;
                 this.indices = this.getIndices();
@@ -120,20 +119,27 @@ module.factory('CrateModel', function() {
                 // return true in cases ii and iii and false in case i to
                 // signal to the caller that the index has changed and new data
                 // might need to be fetched
-                if( this.selectedURLElement>=0) {
-                    // deselection
-                    // clicked on selected row?
-                    if( this.selectedURLElement === element) {
-                        this.deselect();
+                if(this.selectedURLElement===null) {
+                    if( this.data!=null) {
+                        console.log('Something wrong happened here - data != null but selectedURLElement is null');
                         return false;
+                    }
+                } else {
+                    if (this.selectedURLElement != 'all') {
+                        // deselection
+                        // clicked on selected row?
+                        if (this.selectedURLElement === element) {
+                            this.deselect(true);
+                            return false;
+                        } else {
+                            this.deselect(true);
+                            this.select(element);
+                            return true;
+                        }
                     } else {
-                        this.deselect();
                         this.select(element);
                         return true;
                     }
-                } else {
-                    this.select(element);
-                   return true;
                 }
             },
             copy: function () {
@@ -195,9 +201,9 @@ module.factory('CrateModel', function() {
     fullModel.rodModel.rowIndex = 1;
     fullModel.murModel.rowIndex = 2;
     fullModel.modModel.rowIndex = 0; // to use module row
-//   fullModel.modModel.rowIndex= 1; // to use moduleID
     fullModel.chipModel.rowIndex = 0;
     fullModel.iov = 'now';
+
     fullModel.modelList =  [
             fullModel.crateModel,
             fullModel.rodModel,
@@ -207,80 +213,62 @@ module.factory('CrateModel', function() {
         ];
 
 
-    // get the index as a list of values
-    fullModel.getIndexList = function() {
-       var indexList = [this.iov];
-       var model = this.crateModel;
-        var finished = false;
-        while (!finished) {
-            if (model.selected >= 0) {
-                indexList.push(model.selectedURLElement);
-                model = model.child;
-                if (model === null) {
-                    finished = true;
-                }
-            } else {
-                indexList.push('all');
-                finished = true;
-            }
-
-        }
-        return indexList;
-    };
 // get the index as an object (generally more robust I think)
     fullModel.getIndex = function() {
+        // null = no data
+        // all = data, no selection
+        // <other> = data and selection
         var index = {
             iov: this.iov,
             crate: null,
             rod: null,
             mur: null,
             mod: null,
-            modID: null,
             chip: null
         };
-//        index.iov = iov;
 
-        if( this.crateModel.selectedURLElement <0) {
-            return index;
+        // do we have crate data?
+        if( this.crateModel.data) {
+            index.crate=this.crateModel.selectedURLElement;
+            if( index.crate ==='all' || index.crate===null) {
+                return index;
+            }
+         }
+        // do we have rod data
+        if( this.rodModel.data) {
+            index.rod = this.rodModel.selectedURLElement;
+            if( index.rod==='all' || index.rod===null) {
+                return index;
+            }
         }
-
-        index.crate = this.crateModel.selectedURLElement;
-        if( this.rodModel.selectedURLElement < 0) {
-            index.rod = 'all';
-            return index;
+        // do we have MUR data
+        if( this.murModel.data) {
+            index.mur = this.murModel.selectedURLElement;
+            if( index.mur==='all' || index.mur===null) {
+                return index;
+            }
         }
-        index.rod = this.rodModel.selectedURLElement;
-
-        if( this.murModel.selectedURLElement < 0) {
-            index.mur = 'all';
-            return index;
+        // do we have MOD data?
+        if( this.modModel.data) {
+            index.mod = this.modModel.selectedURLElement;
+            if( index.mod==='all' || index.mod===null) {
+                return index;
+            }
         }
-
-        index.mur = this.murModel.selectedURLElement;
-        if( this.modModel.selectedURLElement < 0) {
-            index.mod = 'all';
-            return index;
+        // do we have Chip data?
+        if( this.chipModel.data) {
+            index.chip = this.chipModel.selectedURLElement;
         }
-
-        index.mod = this.modModel.selectedURLElement;
-// need to find the module ID!
-
-
-        if( this.chipModel.selectedURLElement < 0) {
-            index.chip = 'all';
-            return index;
-        }
-
-        index.chip = this.chipModel.selectedURLElement;
         return index;
     };
+
     // this probably should live somewhere else?
     fullModel.getURL = function () {
         var url = '/crates/' + this.iov + '/';
         var model = this.crateModel;
         var finished = false;
         while (!finished) {
-            if (model.selectedURLElement >= 0) {
+            if (model.selectedURLElement!='all' && model.selectedURLElement!=null) {
                 url += model.selectedURLElement + '/';
                 model = model.child;
                 if (model === null) {

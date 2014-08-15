@@ -17,12 +17,12 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
             var promises = [];
             var base = 'api/crates/' + cratesIndex.iov;
             var modbase ='api/modules/' + cratesIndex.iov;
-            var cr=-1;
-            var rd=-1;
-            var mr=-1;
-            var md=-1;
-            var mid=-1;
-            var ch=-1;
+            var cr=cratesIndex.crate;
+            var rd=cratesIndex.rod;
+            var mr=cratesIndex.mur;
+            var md=cratesIndex.mod;
+            var mid=null; // this will be set lower down
+            var ch=cratesIndex.chip;
 
             var forceReload = false;
             if( cratesIndex.iov != model.iov) {
@@ -31,6 +31,8 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                 model.iov = cratesIndex.iov;
             }
 
+            console.log('getModelByIndex: currentModel '+currentModelIndex.crate+' '+currentModelIndex.rod+' '+currentModelIndex.mur+' '+currentModelIndex.mod+' '+currentModelIndex.chip);
+            console.log('getModelByIndex: requested    '+cratesIndex.crate+' '+cratesIndex.rod+' '+cratesIndex.mur+' '+cratesIndex.mod+' '+cratesIndex.chip);
             if(cratesIndex.crate!=null && cratesIndex.crate!='all') { cr=parseInt(cratesIndex.crate);}
             if(cratesIndex.rod!=null && cratesIndex.rod!='all') { rd=parseInt(cratesIndex.rod);}
             if(cratesIndex.mur!=null && cratesIndex.mur!='all') { mr=parseInt(cratesIndex.mur);}
@@ -39,6 +41,7 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
 
             console.log('CratesData: '+base);
             console.log('-=-=-= : '+cr+' '+currentModelIndex.crate)
+            // check to see if we need to reload the crate data?
             if(forceReload || cr != parseInt(currentModelIndex.crate)) {
                 forceReload = true; // force the other bits of the model to reload
                 if( currentModelIndex.crate==='all') {
@@ -56,15 +59,17 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                 console.log("Don't need to reload crate");
             }
 
-            if( cr >= 0) {
+            if( cr!=null && cr!='all') {
                 base += '/' + cratesIndex.crate;
                 console.log('CratesData: ' + base);
                 // check to see if we already have this ROD
-                if (forceReload || rd != currentModelIndex.rod) {
+                if (forceReload || rd != parseInt(currentModelIndex.rod)) {
                     forceReload=true;
                     if( currentModelIndex.rod==='all') {
+                        // if rod=all we should already have the rod data we just need to reset the mur data and below
                         model.murModel.resetModel(true);
                     } else {
+                        // reset the model and load the new data
                         model.rodModel.resetModel(true);
                         promises.push(crateAPI.getByURL(base + '/all').then(
                             function (res) {
@@ -76,10 +81,10 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                     console.log("Don't need to reload rod");
                 }
 
-                if( rd >=0) {
+                if( rd!=null && rd!='all') {
                     base += '/' + cratesIndex.rod;
                     console.log('CratesData: ' + base);
-                    if( forceReload || mr != currentModelIndex.mur)
+                    if( forceReload || mr != parseInt(currentModelIndex.mur))
                     {
                         forceReload=true;
                         if( currentModelIndex.mur==='all') {
@@ -100,7 +105,7 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                         base += '/' + cratesIndex.mur;
                         console.log('CratesData: ' + base);
                         // does this need the same treatment for optimising reloading?
-                        if( forceReload || md != currentModelIndex.mod) {
+                        if( forceReload || md != parseInt(currentModelIndex.mod)) {
                             model.modModel.resetModel(true);
                             promises.push(crateAPI.getByURL(base + '/all').then(
                                 function (res) {
@@ -134,7 +139,7 @@ module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTT
                         } else { // only do this if we didn't force load the module - since then we need to force load the chip anyway
                             console.log("Don't need to reload module");
                             // not reloading the module should we reload the chip?
-                            if( forceReload || ch != currentModelIndex.chip) {
+                            if( forceReload || ch != parseInt(currentModelIndex.chip)) {
                                 // then need to find the module ID... as we did above
                                 model.chipModel.resetModel(true);
                                 var mid=-1;

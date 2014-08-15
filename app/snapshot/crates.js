@@ -120,21 +120,21 @@ angular.module('snapshot-crates', [])
                         field = propertyList[i];
                         if (!params[field]) {
                             this[field] = 'all';
-                            finished = true;
                         } else {
                             this[field] = $routeParams[field]
                             i++;
                         }
-                        if (i === n) {
+                        if (this[field]==='all' || i === n) {
                             finished = true;
                         }
                     }
+                       console.log('setFromURLParams: '+this.crate+' '+this.rod+' '+this.mur+' '+this.mod+' '+this.chip);
                 },
                 modifyProperty: function(property,value) {
                     if( property=='iov') {
                         if( value != this.iov) {
                             this.iov = value;
-                            this.crate = all;
+                            this.crate = 'all';
                             this.rod = null;
                             this.mur = null;
                             this.mod = null;
@@ -168,6 +168,7 @@ angular.module('snapshot-crates', [])
             $scope.loaded=false;
 
             $scope.dataIndex.setFromURLParams($routeParams);
+
 
             // for saving snapshots
             $scope.dataStores=CratesDataStore;
@@ -223,12 +224,6 @@ angular.module('snapshot-crates', [])
                 $location.path('/store');
             };
 
-            // click handler
-            // index = column in the row that was clicked
-            // values = values in the row
-            // model = model providing the data for the table that was clicked
-            // the model knows which column is used to index the row
-            // and which column is used to generate the URL
             $scope.clickV2 = function(property, el) {
                 var element=el;
                 // update the index. this will trigger a reload to update the model
