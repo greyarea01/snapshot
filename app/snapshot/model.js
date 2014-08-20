@@ -99,7 +99,7 @@ module.factory('CrateModel', function() {
             },
 
             setData: function(data,element) {
-                console.log('setData: '+element);
+                console.log('setData: '+this.name+' '+element);
                 this.data = data;
                 this.selectedURLElement = element;
                 this.indices = this.getIndices();

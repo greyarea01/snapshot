@@ -10,164 +10,164 @@ var module = angular.module('snapshot');
 
 module.factory('CratesData', ['CratesHTTP','CrateModel','$q', function(CratesHTTP,CrateModel,$q) {
     var api = {
-        getModelByIndex: function (cratesIndex) {
+        getModelByIndex: function (requestIndex) {
             var crateAPI = CratesHTTP;
             var model = CrateModel;
             var currentModelIndex = model.getIndex();
             var promises = [];
-            var base = 'api/crates/' + cratesIndex.iov;
-            var modbase ='api/modules/' + cratesIndex.iov;
-            var cr=cratesIndex.crate;
-            var rd=cratesIndex.rod;
-            var mr=cratesIndex.mur;
-            var md=cratesIndex.mod;
-            var mid=null; // this will be set lower down
-            var ch=cratesIndex.chip;
+            var values;
+            var i;
+            var n;
+            var base = 'api/crates/' + requestIndex.iov;
+            var modbase ='api/modules/' + requestIndex.iov;
+            var cr=requestIndex.crate;
+            var rd=requestIndex.rod;
+            var mr=requestIndex.mur;
+            var md=requestIndex.mod;
+            var mid=-1; // this will be set lower down
+            var ch=requestIndex.chip;
+            var loadCrate = false;
+            var loadRod = false;
+            var loadMur = false;
+            var loadMod = false;
+            var loadChip = false;
 
             var forceReload = false;
-            if( cratesIndex.iov != model.iov) {
-                console.log('IOV='+cratesIndex.iov+' '+model.iov);
+            if( requestIndex.iov != model.iov) {
+                console.log('IOV='+requestIndex.iov+' '+model.iov);
                 forceReload = true;
-                model.iov = cratesIndex.iov;
+                model.iov = requestIndex.iov;
             }
 
             console.log('getModelByIndex: currentModel '+currentModelIndex.crate+' '+currentModelIndex.rod+' '+currentModelIndex.mur+' '+currentModelIndex.mod+' '+currentModelIndex.chip);
-            console.log('getModelByIndex: requested    '+cratesIndex.crate+' '+cratesIndex.rod+' '+cratesIndex.mur+' '+cratesIndex.mod+' '+cratesIndex.chip);
-            if(cratesIndex.crate!=null && cratesIndex.crate!='all') { cr=parseInt(cratesIndex.crate);}
-            if(cratesIndex.rod!=null && cratesIndex.rod!='all') { rd=parseInt(cratesIndex.rod);}
-            if(cratesIndex.mur!=null && cratesIndex.mur!='all') { mr=parseInt(cratesIndex.mur);}
-            if(cratesIndex.mod!=null && cratesIndex.mod!='all') { md=parseInt(cratesIndex.mod);}
-            if(cratesIndex.chip!=null && cratesIndex.chip!='all') { ch=parseInt(cratesIndex.chip);}
+            console.log('getModelByIndex: requested    '+requestIndex.crate+' '+requestIndex.rod+' '+requestIndex.mur+' '+requestIndex.mod+' '+requestIndex.chip);
+// force to integers if not null or 'all'
+            if(requestIndex.crate!=null && requestIndex.crate!='all') { cr=parseInt(requestIndex.crate);}
+            if(requestIndex.rod!=null && requestIndex.rod!='all') { rd=parseInt(requestIndex.rod);}
+            if(requestIndex.mur!=null && requestIndex.mur!='all') { mr=parseInt(requestIndex.mur);}
+            if(requestIndex.mod!=null && requestIndex.mod!='all') { md=parseInt(requestIndex.mod);}
+            if(requestIndex.chip!=null && requestIndex.chip!='all') { ch=parseInt(requestIndex.chip);}
 
             console.log('CratesData: '+base);
             console.log('-=-=-= : '+cr+' '+currentModelIndex.crate)
-            // check to see if we need to reload the crate data?
-            if(forceReload || cr != parseInt(currentModelIndex.crate)) {
-                forceReload = true; // force the other bits of the model to reload
-                if( currentModelIndex.crate==='all') {
-                    model.rodModel.resetModel(true);
-                    console.log('Dont need to reload crate data but do need to force reload of the rest');
+
+            // we should load crate data if the force load flag is set or if the current model is null
+            loadCrate = forceReload || currentModelIndex.crate===null;
+
+            if( requestIndex.crate==='all' || requestIndex.crate===null) {
+                loadRod = false;
+                model.rodModel.resetModel(true);
+            } else {
+                loadRod = forceReload || loadCrate || requestIndex.crate != currentModelIndex.crate;
+                if( requestIndex.rod==='all' || requestIndex.rod===null) {
+                    loadMur = false;
+                    model.murModel.resetModel(true);
                 } else {
-                    promises.push(
-                        crateAPI.getByURL(base + '/all').then(
-                            function (res) {
-                                model.crateModel.setData(res.data, cr);
-                                console.log('CratesData: got crates : ' + cr);
-                            }));
+                    loadMur = forceReload || loadRod || requestIndex.rod != currentModelIndex.rod;
+                    if( requestIndex.mur==='all' || requestIndex.mur===null) {
+                        loadMod = false;
+                        model.modModel.resetModel(true);
+                    } else {
+                        loadMod = forceReload || loadMur || requestIndex.mur != currentModelIndex.mur;
+                        if( requestIndex.mod ==='all' || requestIndex.mod===null) {
+                            loadChip = false;
+                            model.chipModel.resetModel(true);
+                        } else {
+                            loadChip = forceReload || loadMod || requestIndex.mod != currentModelIndex.mod;
+                        }
+                    }
+                }
+            }
+
+            console.log('getByURL:'+loadCrate+' '+loadRod+' '+loadMur+' '+loadMod+' '+loadChip);
+            if(loadCrate) {
+                promises.push(crateAPI.getByURL(base+'/all').then(
+                    function(res) {
+                        model.crateModel.setData(res.data, cr);
+                    }
+                ))
+            } else {
+                model.crateModel.select(cr);
+            }
+
+            if(loadRod) {
+                promises.push(crateAPI.getByURL(base+'/'+cr+'/all'). then(
+                    function(res) {
+                        model.rodModel.setData(res.data,rd);
+                    }
+                ))
+            } else {
+                model.rodModel.select(rd);
+            }
+
+            if( loadMur) {
+                promises.push(crateAPI.getByURL(base+'/'+cr+'/'+rd+'/all').then(
+                    function(res) {
+                        model.murModel.setData(res.data,mr);
+                    }
+                ))
+            } else {
+                model.murModel.select(mr);
+            }
+
+            if( loadMod) {
+                if (!loadChip) {
+                    promises.push(crateAPI.getByURL(base + '/' + cr + '/' + rd + '/' + mr + '/all').then(
+                        function (res) {
+                            model.modModel.setData(res.data, md);
+                        }
+                    ));
+                    model.chipModel.select(ch);
+                } else {
+                    // chain the chip and module promises
+                    promises.push(crateAPI.getByURL(base + '/' + cr + '/' + rd + '/' + mr + '/all').then(
+                        function (res) {
+                            model.modModel.setData(res.data, md);
+                            return res.data.rows;
+                        }).then(
+                        function (rows) {
+                            var n = rows.length;
+                            // look for the module serial number (mid) for the module on the row given by md
+                            for (var i = 0; i < n; ++i) {
+                                var values = rows[i]["values"];
+                                console.log('row processing: ' + values[0] + ' ' + values[1]);
+                                if (values[0] === md) {
+                                    mid = values[1];
+                                }
+                            }// could be optimised to not loop over the whole thing.... i suppose
+
+                            if (mid >= 0) {
+                                modbase += '/' + mid;
+                                console.log('CratesData: ' + modbase);
+                                return crateAPI.getByURL(modbase + '/all').then(
+                                    function (res) {
+                                        console.log(JSON.stringify(res.data));
+                                        model.chipModel.setData(res.data, ch);
+                                        console.log('CratesData: got crates : ' + mid + ' ' + ch);
+                                    });
+                            }
+                        }));
                 }
             } else {
-                console.log("Don't need to reload crate");
-            }
-
-            if( cr!=null && cr!='all') {
-                base += '/' + cratesIndex.crate;
-                console.log('CratesData: ' + base);
-                // check to see if we already have this ROD
-                if (forceReload || rd != parseInt(currentModelIndex.rod)) {
-                    forceReload=true;
-                    if( currentModelIndex.rod==='all') {
-                        // if rod=all we should already have the rod data we just need to reset the mur data and below
-                        model.murModel.resetModel(true);
-                    } else {
-                        // reset the model and load the new data
-                        model.rodModel.resetModel(true);
-                        promises.push(crateAPI.getByURL(base + '/all').then(
-                            function (res) {
-                                model.rodModel.setData(res.data, rd);
-                                console.log('CratesData: got crates : ' + cr + ' ' + rd);
-                            }));
+                model.modModel.select(md);
+                if(loadChip) {
+                    n = model.modModel.data.rows.length;
+                    for(i=0;i<n;++i) {
+                        values = model.modModel.data.rows[i]["values"];
+                        if( values[0] === md) {
+                            mid = values[1];
+                        }
                     }
+                    promises.push(crateAPI.getByURL(modbase+'/'+mid+'/all').then(
+                        function(res) {
+                            model.chipModel.setData(res.data,ch);
+                        })
+                    );
                 } else {
-                    console.log("Don't need to reload rod");
-                }
-
-                if( rd!=null && rd!='all') {
-                    base += '/' + cratesIndex.rod;
-                    console.log('CratesData: ' + base);
-                    if( forceReload || mr != parseInt(currentModelIndex.mur))
-                    {
-                        forceReload=true;
-                        if( currentModelIndex.mur==='all') {
-                            model.modModel.resetModel(true);
-                        } else {
-                            model.murModel.resetModel(true);
-                            promises.push(crateAPI.getByURL(base + '/all').then(
-                                function (res) {
-                                    model.murModel.setData(res.data, mr);
-                                    console.log('CratesData: got crates : ' + cr + ' ' + rd + ' ' + mr);
-                                    console.log('CratesData: *** ' + JSON.stringify(res.data));
-                                }));
-                        }
-                    } else {
-                        console.log("Don't need to reload MUR");
-                    }
-                    if(mr>=0) {
-                        base += '/' + cratesIndex.mur;
-                        console.log('CratesData: ' + base);
-                        // does this need the same treatment for optimising reloading?
-                        if( forceReload || md != parseInt(currentModelIndex.mod)) {
-                            model.modModel.resetModel(true);
-                            promises.push(crateAPI.getByURL(base + '/all').then(
-                                function (res) {
-                                    model.modModel.setData(res.data, md);
-                                    console.log('CratesData: got crates : ' + cr + ' ' + rd + ' ' + mr + ' ' + md);
-                                    return model.modModel.data['rows'];
-                                }).then(
-                                function (rows) { // chained to the module promise...
-                                    // need to find the module id.
-                                    // we know the row number
-                                    var n = rows.length;
-                                    for (var i = 0; i < n; ++i) {
-                                        values = rows[i]["values"];
-                                        console.log('row processing: ' + values[0] + ' ' + values[1]);
-                                        if (values[0] === md) {
-                                            mid = values[1];
-                                        }
-                                    }// could be optimised to not loop over the whole thing.... i suppose
-
-                                    if (mid >= 0) {
-                                        modbase += '/' + mid;
-                                        console.log('CratesData: ' + modbase);
-                                        return crateAPI.getByURL(modbase + '/all').then(
-                                            function (res) {
-                                                console.log(JSON.stringify(res.data));
-                                                model.chipModel.setData(res.data, ch);
-                                                console.log('CratesData: got crates : ' + mid + ' ' + ch);
-                                            });
-                                    }
-                                }));
-                        } else { // only do this if we didn't force load the module - since then we need to force load the chip anyway
-                            console.log("Don't need to reload module");
-                            // not reloading the module should we reload the chip?
-                            if( forceReload || ch != parseInt(currentModelIndex.chip)) {
-                                // then need to find the module ID... as we did above
-                                model.chipModel.resetModel(true);
-                                var mid=-1;
-                                var rows = model.modModel.data['rows'];
-                                var n = rows.length;
-                                for (var i = 0; i < n; ++i) {
-                                    values = rows[i]["values"];
-                                    console.log('row processing: ' + values[0] + ' ' + values[1]);
-                                    if (values[0] === md) {
-                                        mid = values[1];
-                                    }
-                                }// could be optimised to not loop over the whole thing.... i suppose
-
-                                if( mid >=0) {
-                                    modbase += '/'+mid;
-                                    promises.push(crateAPI.getByURL(modbase+'/all').then(
-                                        function(res) {
-                                            model.chipModel.setData(res.data,ch);
-                                        }));
-                                }
-                            } else {
-                                console.log("Don't need to reload chip");
-                            }
-                        }
-
-                    }
+                    model.chipModel.select(ch);
                 }
             }
+
             return $q.all(promises); // sync on all requests
         }
     };
